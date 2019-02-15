@@ -1,4 +1,3 @@
-import sys
 from scapy.all import srp,Ether,ARP,conf
 
 def arp_ping(netmask="192.168.1.0/24"):
