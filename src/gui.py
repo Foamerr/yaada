@@ -1,4 +1,5 @@
-from tkinter import Tk, Label, Button
+import tkinter as tk
+import discovery as dis
 
 
 class MyFirstGUI:
@@ -6,19 +7,18 @@ class MyFirstGUI:
         self.master = master
         master.title("hackerman")
 
-        self.label = Label(master, text="hackerman interface")
+        self.label = tk.Label(master, text="hackerman interface")
         self.label.pack()
 
-        self.greet_button = Button(master, text="hack", command=self.hack)
-        self.greet_button.pack()
+        options = self.discover()
+        tkvar = tk.StringVar(master)
+        tkvar.set(options[0])
+        option_menu  = tk.OptionMenu(master, tkvar, *options)
+        option_menu.pack()
 
-        self.close_button = Button(master, text="Close", command=master.quit)
-        self.close_button.pack()
+    def discover(self):
+        return dis.arp_ping()
 
-    def hack(self):
-        print("hi")
-
-
-root = Tk()
+root = tk.Tk()
 my_gui = MyFirstGUI(root)
 root.mainloop()
