@@ -1,6 +1,9 @@
 class IpToMac:
 
     def __init__(self):
+        """
+        Initialises an empty dictionary
+        """
         self._ip_to_mac = {}
 
     def set(self, ip, mac):
