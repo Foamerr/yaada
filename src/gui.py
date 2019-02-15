@@ -1,4 +1,5 @@
-from tkinter import Tk, Label, Button
+from tkinter import Tk, Label, Button, Menubutton
+import tkinter as tk
 
 class MyFirstGUI:
     def __init__(self, master):
@@ -8,14 +9,14 @@ class MyFirstGUI:
         self.label = Label(master, text="hackerman interface")
         self.label.pack()
 
-        self.greet_button = Button(master, text="hack", command=self.hack)
-        self.greet_button.pack()
-
-        self.close_button = Button(master, text="Close", command=master.quit)
-        self.close_button.pack()
-
-    def hack(self):
-        print("ARP Poison ofzo")
+        options = self.discover()
+        tkvar = tk.StringVar(master)
+        tkvar.set(options[0])
+        option_menu  = tk.OptionMenu(master, tkvar, *options)
+        option_menu.pack()
+    
+    def discover(self):
+        return ['1', '2']
 
 root = Tk()
 my_gui = MyFirstGUI(root)
