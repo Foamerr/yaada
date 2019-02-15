@@ -1,5 +1,6 @@
 from tkinter import Tk, Label, Button
 
+
 class MyFirstGUI:
     def __init__(self, master):
         self.master = master
@@ -15,7 +16,8 @@ class MyFirstGUI:
         self.close_button.pack()
 
     def hack(self):
-        print("ARP Poison ofzo")
+        print("hi")
+
 
 root = Tk()
 my_gui = MyFirstGUI(root)
