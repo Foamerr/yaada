@@ -1,12 +1,12 @@
-from tkinter import Tk, Label, Button, Menubutton
 import tkinter as tk
+import discovery as dis
 
 class MyFirstGUI:
     def __init__(self, master):
         self.master = master
         master.title("hackerman")
 
-        self.label = Label(master, text="hackerman interface")
+        self.label = tk.Label(master, text="hackerman interface")
         self.label.pack()
 
         options = self.discover()
@@ -16,8 +16,8 @@ class MyFirstGUI:
         option_menu.pack()
     
     def discover(self):
-        return ['1', '2']
+        return dis.arp_ping()
 
-root = Tk()
+root = tk.Tk()
 my_gui = MyFirstGUI(root)
 root.mainloop()
