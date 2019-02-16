@@ -4,6 +4,8 @@ from tkinter import messagebox
 from tkinter import ttk
 from frames.arp_poisoning_frame import ArpFrame
 from frames.initial_frame import InitialFrame
+from frames.dns_spoofing_frame import DnsSpoofingFrame
+from frames.logging_frame import LoggingFrame
 
 
 class MainApplication(tk.Frame):
@@ -15,64 +17,100 @@ class MainApplication(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
         self.winfo_toplevel().title("hackerman")
+        self.configure(bg='black')
 
-        # Setting the dimensions of the application window
-        width = int(self.winfo_screenwidth() * 0.4)
-        height = int(self.winfo_screenheight() * 0.4)
+        self.notebook = None
+        self.tabs = None
+        self.tab_map = None
+        self.log = None
+
+        self.set_style()
+        self.set_size(parent)
+        self.create_menu_bar(parent)
+        self.create_tabs()
+
+    @staticmethod
+    def set_style():
+        style = ttk.Style()
+        style.element_create('Plain.Notebook.tab', 'from', 'default')
+        style.layout("TNotebook.Tab",
+                     [('Plain.Notebook.tab', {'children':
+                      [('Notebook.padding', {'side': 'top', 'children':
+                        [('Notebook.focus', {'side': 'top', 'children':
+                          [('Notebook.label', {'side': 'top', 'sticky': ''})], 'sticky': 'NSWE'})], 'sticky': 'NSWE'})],
+                            'sticky': 'NSWE'})])
+        style.configure("TNotebook", background='black', borderwidth=0)
+        style.configure("TNotebook.Tab", background='black', foreground='white', lightcolor='gray', borderwidth=2)
+        style.configure("TFrame", background='black', foreground='white', borderwidth=0)
+
+    def set_size(self, parent):
+        """
+        Sets the width, height, and start positions of the applications
+        """
         x_start = int(self.winfo_screenwidth() * 0.2)
         y_start = int(self.winfo_screenheight() * 0.2)
+        width = int(self.winfo_screenwidth() * 0.5)
+        height = int(self.winfo_screenheight() * 0.35)
 
         parent.geometry('%dx%d+%d+%d' % (width, height, x_start, y_start))
         parent.resizable(0, 0)
 
-        # Adding the menubar
-        self.create_menubar(parent)
-
-        # Divide the application into rows and columns
-        rows = 0
-        while rows < 50:
-            self.rowconfigure(rows, weight=1)
-            self.columnconfigure(rows, weight=1)
-            rows += 1
+    def create_tabs(self):
+        """
+        Creates tabs from frames and names provided in @tab_map
+        """
+        row = 0
+        while row < 100:
+            self.rowconfigure(row, weight=1)
+            self.columnconfigure(row, weight=1)
+            row += 1
 
         self.notebook = ttk.Notebook(self)
-        self.notebook.grid(row=1, column=0, columnspan=50, rowspan=49, sticky='NESW')
+        self.log = LoggingFrame(parent=self)
+
+        self.notebook.grid(row=0, column=0, columnspan=100, rowspan=41, sticky='NSWE')
+        self.log.grid(row=41, column=0, columnspan=100, rowspan=100, sticky='NSWE')
 
         self.tabs = {}
-        self.tab_mapping = OrderedDict([
-            (InitialFrame, 'Initial'),
-            (ArpFrame, 'ARP Spoofing')
+        self.tab_map = OrderedDict([
+            (InitialFrame, 'Home'),
+            (ArpFrame, 'ARP Poisoning'),
+            (DnsSpoofingFrame, 'DNS Spoofing')
         ])
 
         # Add the frames to the application
-        for tab in self.tab_mapping.keys():
-            frame_name = self.tab_mapping[tab]
+        for tab in self.tab_map.keys():
+            frame_name = self.tab_map[tab]
             frame = tab(parent=self.notebook, controller=self)
             self.notebook.add(frame, text=frame_name)
         self.tabs[tab.__name__] = frame
 
-    def create_menubar(self, parent):
+    def create_menu_bar(self, parent):
         """
         Creates a menu bar with respect to @parent
         """
-        menubar = tk.Menu(self)
-        helpmenu = tk.Menu(menubar, tearoff=0)
+        menu_bar = tk.Menu(self)
+        help_menu = tk.Menu(menu_bar, tearoff=0)
 
-        helpmenu.add_command(label="About", command=self.dis_about)
-        helpmenu.add_command(label="Documentation", command=self.dis_doc)
-        # helpmenu.add_separator()
+        help_menu.add_command(label="About", command=self.dis_about)
+        help_menu.add_command(label="Documentation", command=self.dis_doc)
+        # help_menu.add_separator()
 
-        menubar.add_cascade(label="Help", menu=helpmenu)
-        menubar.add_command(label="Exit", command=root.quit)
+        menu_bar.add_cascade(label="Help", menu=help_menu)
+        menu_bar.add_command(label="Exit", command=root.quit)
 
-        parent.config(menu=menubar)
+        parent.config(menu=menu_bar)
 
     @staticmethod
     def dis_about():
         """
         Displays a message box containing the `about' section information
         """
-        messagebox.showinfo("About", "Created by Stijn Derks and Nick van de Waterlaat")
+        messagebox.showinfo("About", "Hackerman is a tool for ARP and DNS spoofing \n"
+                                     "with different modalities that automatically \n"
+                                     "poisons ARP caches and uses DNS queries to \n"
+                                     "poison recursive DNS cache. \n"
+                                     "Created by Stijn Derks and Nick van de Waterlaat")
 
     @staticmethod
     def dis_doc():

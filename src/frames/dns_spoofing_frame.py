@@ -1,7 +1,7 @@
 import tkinter as tk
 
 
-class InitialFrame(tk.Frame):
+class DnsSpoofingFrame(tk.Frame):
 
     def __init__(self, parent, controller):
         """
@@ -9,7 +9,9 @@ class InitialFrame(tk.Frame):
         """
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.configure(bg='black')
 
         # welcome text start page
-        label_welcome = tk.Label(self, text='Welcome to tab used for DNS spoofing.')
-        label_welcome.pack(side='top', pady=20)
+        self.label_welcome = tk.Label(self, text='Welcome to tab used for DNS spoofing.')
+        self.label_welcome.config(bg='black', foreground='white')
+        self.label_welcome.pack(side='top', pady=20)
