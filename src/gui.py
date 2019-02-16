@@ -1,11 +1,12 @@
 import tkinter as tk
 from collections import OrderedDict
-from tkinter import messagebox
 from tkinter import ttk
 from frames.arp_poisoning_frame import ArpFrame
 from frames.initial_frame import InitialFrame
 from frames.dns_spoofing_frame import DnsSpoofingFrame
 from frames.logging_frame import LoggingFrame
+from frames.help_frame import HelpFrame
+from frames.target_frame import TargetFrame
 
 
 class MainApplication(tk.Frame):
@@ -26,22 +27,27 @@ class MainApplication(tk.Frame):
 
         self.set_style()
         self.set_size(parent)
-        self.create_menu_bar(parent)
+        # self.create_menu_bar(parent)
         self.create_tabs()
 
     @staticmethod
     def set_style():
         style = ttk.Style()
         style.element_create('Plain.Notebook.tab', 'from', 'default')
-        style.layout("TNotebook.Tab",
-                     [('Plain.Notebook.tab', {'children':
-                      [('Notebook.padding', {'side': 'top', 'children':
-                        [('Notebook.focus', {'side': 'top', 'children':
-                          [('Notebook.label', {'side': 'top', 'sticky': ''})], 'sticky': 'NSWE'})], 'sticky': 'NSWE'})],
-                            'sticky': 'NSWE'})])
-        style.configure("TNotebook", background='black', borderwidth=0)
-        style.configure("TNotebook.Tab", background='black', foreground='white', lightcolor='gray', borderwidth=2)
-        style.configure("TFrame", background='black', foreground='white', borderwidth=0)
+        style.theme_use('classic')
+
+        style.configure("color.TButton", bg='#DADADA', fg='black')
+        style.configure("color.TLabel", bg='#DADADA', fg='black')
+
+        # style.layout("TNotebook.Tab",
+        #              [('Plain.Notebook.tab', {'children':
+        #               [('Notebook.padding', {'side': 'top', 'children':
+        #                 [('Notebook.focus', {'side': 'top', 'children':
+        #                   [('Notebook.label', {'side': 'top', 'sticky': ''})], 'sticky': 'NSWE'})], 'sticky': 'NSWE'})],
+        #                     'sticky': 'NSWE'})])
+        # style.configure("TNotebook", background='black', borderwidth=0)
+        # style.configure("TNotebook.Tab", background='black', foreground='white', lightcolor='gray', borderwidth=2)
+        # style.configure("TFrame", background='black', foreground='white', borderwidth=0)
 
     def set_size(self, parent):
         """
@@ -68,14 +74,16 @@ class MainApplication(tk.Frame):
         self.notebook = ttk.Notebook(self)
         self.log = LoggingFrame(parent=self)
 
-        self.notebook.grid(row=0, column=0, columnspan=100, rowspan=41, sticky='NSWE')
-        self.log.grid(row=41, column=0, columnspan=100, rowspan=100, sticky='NSWE')
+        self.notebook.grid(row=0, column=0, columnspan=100, rowspan=21, sticky='NSWE')
+        self.log.grid(row=21, column=0, columnspan=100, rowspan=100, sticky='NSWE')
 
         self.tabs = {}
         self.tab_map = OrderedDict([
             (InitialFrame, 'Home'),
+            (TargetFrame, 'Target'),
             (ArpFrame, 'ARP Poisoning'),
-            (DnsSpoofingFrame, 'DNS Spoofing')
+            (DnsSpoofingFrame, 'DNS Spoofing'),
+            (HelpFrame, 'Help')
         ])
 
         # Add the frames to the application
@@ -85,39 +93,39 @@ class MainApplication(tk.Frame):
             self.notebook.add(frame, text=frame_name)
         self.tabs[tab.__name__] = frame
 
-    def create_menu_bar(self, parent):
-        """
-        Creates a menu bar with respect to @parent
-        """
-        menu_bar = tk.Menu(self)
-        help_menu = tk.Menu(menu_bar, tearoff=0)
+    # def create_menu_bar(self, parent):
+    #     """
+    #     Creates a menu bar with respect to @parent
+    #     """
+    #     menu_bar = tk.Menu(self)
+    #     help_menu = tk.Menu(menu_bar, tearoff=0)
+    #
+    #     help_menu.add_command(label="About", command=self.dis_about)
+    #     help_menu.add_command(label="Documentation", command=self.dis_doc)
+    #     # help_menu.add_separator()
+    #
+    #     menu_bar.add_cascade(label="Help", menu=help_menu)
+    #     menu_bar.add_command(label="Exit", command=root.quit)
+    #
+    #     parent.config(menu=menu_bar)
 
-        help_menu.add_command(label="About", command=self.dis_about)
-        help_menu.add_command(label="Documentation", command=self.dis_doc)
-        # help_menu.add_separator()
-
-        menu_bar.add_cascade(label="Help", menu=help_menu)
-        menu_bar.add_command(label="Exit", command=root.quit)
-
-        parent.config(menu=menu_bar)
-
-    @staticmethod
-    def dis_about():
-        """
-        Displays a message box containing the `about' section information
-        """
-        messagebox.showinfo("About", "Hackerman is a tool for ARP and DNS spoofing \n"
-                                     "with different modalities that automatically \n"
-                                     "poisons ARP caches and uses DNS queries to \n"
-                                     "poison recursive DNS cache. \n"
-                                     "Created by Stijn Derks and Nick van de Waterlaat")
-
-    @staticmethod
-    def dis_doc():
-        """
-        Displays a message box containing the `Documentation' section information
-        """
-        messagebox.showinfo("Documentation", "Lorem ipsum...")
+    # @staticmethod
+    # def dis_about():
+    #     """
+    #     Displays a message box containing the `about' section information
+    #     """
+    #     messagebox.showinfo("About", "Hackerman is a tool for ARP and DNS spoofing \n"
+    #                                  "with different modalities that automatically \n"
+    #                                  "poisons ARP caches and uses DNS queries to \n"
+    #                                  "poison recursive DNS cache. \n"
+    #                                  "Created by Stijn Derks and Nick van de Waterlaat")
+    #
+    # @staticmethod
+    # def dis_doc():
+    #     """
+    #     Displays a message box containing the `Documentation' section information
+    #     """
+    #     messagebox.showinfo("Documentation", "Lorem ipsum...")
 
 
 if __name__ == '__main__':

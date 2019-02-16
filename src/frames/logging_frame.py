@@ -41,7 +41,7 @@ class LoggingFrame(tk.Frame):
         self.stat_text = self.empty_stat
         self.stat_msg = tk.Message(self, text=self.stat.__add__(self.stat_text), width=600, anchor=tk.W)
         self.stat_msg.pack(anchor=tk.W, fill=tk.X, side=tk.BOTTOM)
-        self.stat_msg.config(bg='black', fg='white')
+        self.stat_msg.config(bg='#DADADA', fg='black')
 
     def empty_line(self):
         """
