@@ -43,12 +43,6 @@ class LoggingFrame(tk.Frame):
         self.stat_msg.pack(anchor=tk.W, fill=tk.X, side=tk.BOTTOM)
         self.stat_msg.config(bg='#DADADA', fg='black')
 
-    def empty_line(self):
-        """
-        Outputs an empty line
-        """
-        self.output_listbox.insert(tk.END, "")
-
     def update_stat(self, msg, append=False):
         """
         Updates the status by either appending @msg or setting the text as @msg.
@@ -62,27 +56,24 @@ class LoggingFrame(tk.Frame):
         self.stat_msg.configure(text=self.stat.__add__(self.stat_text))
         self.update()
 
-    def update_out(self, msg, append=False):
+    # TODO: combine out and in and simply consider 2 cases that have to be passed as parameters
+    def update_out(self, msg):
         """
         Updates the output by either appending @msg or setting the text as @msg.
-
-        @precondition: @msg.type == str
         """
-        if not append:
-            self.output_listbox.delete(0, tk.END)
-        self.output_listbox.insert(tk.END, self.get_output_prefix().__add__(tk.re.sub(r'[^a-zA-Z0-9\._-]', ' ', msg)))
-        self.update()
+        self.out_list.insert(tk.END, self.get_prefix_out().__add__(msg))
+        self.out_list.select_clear(self.out_list.size() - 2)
+        self.out_list.select_set(tk.END)
+        self.out_list.yview(tk.END)
 
-    def update_in(self, msg, append=True):
+    def update_in(self, msg):
         """
         Updates the output as input by either appending @message or setting the text as @message.
-
-        @precondition: @msg.type == str
         """
-        if not append:
-            self.output_listbox.delete(0, tk.END)
-        self.output_listbox.insert(tk.END, self.get_input_prefix().__add__(tk.re.sub(r'[^a-zA-Z0-9\._-]', ' ', msg)))
-        self.update()
+        self.out_list.insert(tk.END, self.get_prefix_in().__add__(msg))
+        self.out_list.select_clear(self.out_list.size() - 2)
+        self.out_list.select_set(tk.END)
+        self.out_list.yview(tk.END)
 
     @staticmethod
     def get_prefix_out():

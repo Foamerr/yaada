@@ -1,12 +1,11 @@
 import tkinter as tk
 from collections import OrderedDict
 from tkinter import ttk
-from frames.arp_poisoning_frame import ArpFrame
+from frames.attack_arp_frame import AttackARPFrame
 from frames.initial_frame import InitialFrame
-from frames.dns_spoofing_frame import DnsSpoofingFrame
+from frames.attack_dns_frame import AttackDNSFrame
 from frames.logging_frame import LoggingFrame
 from frames.help_frame import HelpFrame
-from frames.target_frame import TargetFrame
 
 
 class MainApplication(tk.Frame):
@@ -38,8 +37,6 @@ class MainApplication(tk.Frame):
 
         style.configure("color.TButton", bg='#DADADA', fg='black')
         style.configure("color.TLabel", bg='#DADADA', fg='black')
-
-        # TODO: initially disable all tabs except start/set target tab
 
         # style.layout("TNotebook.Tab",
         #              [('Plain.Notebook.tab', {'children':
@@ -82,9 +79,8 @@ class MainApplication(tk.Frame):
         self.tabs = {}
         self.tab_map = OrderedDict([
             (InitialFrame, 'Home'),
-            (TargetFrame, 'Target'),
-            (ArpFrame, 'ARP Poisoning'),
-            (DnsSpoofingFrame, 'DNS Spoofing'),
+            (AttackARPFrame, 'ARP Poisoning'),
+            (AttackDNSFrame, 'DNS Spoofing'),
             (HelpFrame, 'Help')
         ])
 
