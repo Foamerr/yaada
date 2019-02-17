@@ -12,18 +12,26 @@ class TargetFrame(tk.Frame):
         self.controller = controller
         self.configure(bg='#DADADA')
 
-        self.label_welcome = tk.Label(self, text='The target has to be selected here.')
-        self.label_welcome.config(bg='#DADADA', fg='black')
-        self.label_welcome.pack(side='top', pady=20)
+        self.button_scan = tk.Button(self, text="Scan local network", command=self.update_local)
+        self.button_scan.config(bg='#DADADA', fg='black')
+        self.button_scan.pack(side='top', pady=15)
 
+        self.ip_box = tk.Listbox(self, width=50, selectmode=tk.MULTIPLE)
+        self.ip_box.pack(side='top', pady=5)
+
+        # TODO: add command for setting global victim(s)
+        self.button_victim = tk.Button(self, text="Set victim(s)")
+        self.button_victim.config(bg='#DADADA', fg='black')
+        self.button_victim.pack(pady=5)
+
+        self.button_reset = tk.Button(self, text="Reset victim(s)", command=self.update_local)
+        self.button_reset.config(bg='#DADADA', fg='black')
+        self.button_reset.pack(pady=5)
+
+    def update_local(self):
+        self.ip_box.delete(0, tk.END)
+
+        # TODO: Create TextBox where users have to fill in the netmask
         options = dis.arp_ping(netmask="192.168.2.0/24")
-        tkvar = tk.StringVar(self)
-        tkvar.set('Select your target here')
-        self.option_menu = tk.OptionMenu(self, tkvar, *options)
-        self.option_menu.config(bg='#DADADA', fg='black', borderwidth=1)
-        self.option_menu.pack(side='top', pady=5)
-
-        # TODO: replace command and actually set global target
-        self.button_doc = tk.Button(self, text='Set target', command=self.quit)
-        self.button_doc.config(bg='#DADADA', fg='black')
-        self.button_doc.pack(side='top', pady=10)
+        for option in options:
+            self.ip_box.insert(tk.END, option)

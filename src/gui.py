@@ -39,6 +39,8 @@ class MainApplication(tk.Frame):
         style.configure("color.TButton", bg='#DADADA', fg='black')
         style.configure("color.TLabel", bg='#DADADA', fg='black')
 
+        # TODO: initially disable all tabs except start/set target tab
+
         # style.layout("TNotebook.Tab",
         #              [('Plain.Notebook.tab', {'children':
         #               [('Notebook.padding', {'side': 'top', 'children':
@@ -56,7 +58,7 @@ class MainApplication(tk.Frame):
         x_start = int(self.winfo_screenwidth() * 0.2)
         y_start = int(self.winfo_screenheight() * 0.2)
         width = int(self.winfo_screenwidth() * 0.5)
-        height = int(self.winfo_screenheight() * 0.35)
+        height = int(self.winfo_screenheight() * 0.55)
 
         parent.geometry('%dx%d+%d+%d' % (width, height, x_start, y_start))
         parent.resizable(0, 0)
