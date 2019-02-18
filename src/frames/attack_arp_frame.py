@@ -12,6 +12,13 @@ class AttackARPFrame(tk.Frame):
         self.controller = controller
         self.configure(bg='#DADADA')
 
+        self.label_ip = tk.Label(self, text="IP of network to scan")
+        self.label_ip.pack(side='top', pady=5)
+
+        self.textbox_ip = tk.Entry(self, width=50)
+        self.textbox_ip.insert(0, self.get_local_ip())
+        self.textbox_ip.pack(side='top', pady=5)
+
         self.button_scan = tk.Button(self, text="Scan local network", command=self.update_local, width=50)
         self.button_scan.config(bg='#DADADA', fg='black')
         self.button_scan.pack(side='top', pady=15)
@@ -35,8 +42,7 @@ class AttackARPFrame(tk.Frame):
         self.controller.log.update_stat('Searching for local network addresses')
         self.controller.log.update_out('searching for local network addresses')
 
-        # TODO: Create TextBox where users have to fill in the netmask
-        options = dis.arp_ping(netmask="192.168.2.0/24")
+        options = dis.arp_ping(netmask=self.textbox_ip.get())
         if not len(options) == 0:
             for option in options:
                 self.ip_box.insert(tk.END, option)
@@ -46,6 +52,9 @@ class AttackARPFrame(tk.Frame):
 
         self.controller.log.update_stat('Finished searching for local network addresses')
         self.controller.log.update_out('finished searching for local network addresses')
+
+    def get_local_ip(self):
+        return "192.168.2.0/24"
 
     def set_target(self):
         targets = ['Stijn']
