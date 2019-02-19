@@ -1,5 +1,6 @@
 import tkinter as tk
 import discovery as dis
+import netifaces
 
 
 class AttackARPFrame(tk.Frame):
@@ -13,12 +14,15 @@ class AttackARPFrame(tk.Frame):
         self.configure(bg='#DADADA')
 
         self.label_ip = tk.Label(self, text="IP of network to scan")
+        self.label_ip.config(bg='#DADADA', fg='black')
         self.label_ip.pack(side='top', pady=5)
 
         self.textbox_ip = tk.Entry(self, width=50)
         self.textbox_ip.insert(0, self.get_local_ip())
         self.textbox_ip.pack(side='top', pady=5)
 
+        # TODO: Display more information about ip address/mac address?
+        # See: https://www.studytonight.com/network-programming-in-python/integrating-port-scanner-with-nmap
         self.button_scan = tk.Button(self, text="Scan local network", command=self.update_local, width=50)
         self.button_scan.config(bg='#DADADA', fg='black')
         self.button_scan.pack(side='top', pady=15)
@@ -53,8 +57,11 @@ class AttackARPFrame(tk.Frame):
         self.controller.log.update_stat('Finished searching for local network addresses')
         self.controller.log.update_out('finished searching for local network addresses')
 
-    def get_local_ip(self):
-        return "192.168.2.0/24"
+    @staticmethod
+    def get_local_ip():
+        # TODO: Add text escaping (special symbols) & verify if valid?
+        gws = netifaces.gateways()
+        return str(gws['default'][netifaces.AF_INET][0]) + "/24"
 
     def set_target(self):
         targets = ['Stijn']
