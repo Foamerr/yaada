@@ -1,7 +1,6 @@
 import tkinter as tk
 import discovery as dis
 import netifaces
-import re
 
 
 class AttackARPFrame(tk.Frame):
@@ -14,48 +13,66 @@ class AttackARPFrame(tk.Frame):
         self.controller = controller
         self.configure(bg='#DADADA')
 
-        self.label_ip = tk.Label(self, text="IP of network to scan")
+        top_frame = tk.Frame(self)
+        top_frame.configure(bg='#DADADA')
+
+        label_frame = tk.Frame(self)
+        label_frame.configure(bg='#DADADA')
+
+        button_set_frame = tk.Frame(self)
+        button_set_frame.configure(bg='#DADADA')
+
+        bottom_frame = tk.Frame(self)
+        bottom_frame.configure(bg='#DADADA')
+
+        # top_frame.pack(side="top", fill="both", expand=True)
+        top_frame.pack(side="top", fill="x")
+        label_frame.pack(side="top", fill="both", expand=True)
+        button_set_frame.pack(side="top", fill="both", expand=True)
+        bottom_frame.pack(side="bottom", fill="both", expand=True)
+
+        self.label_ip = tk.Label(top_frame, text="Gateway to use (already provided is default)")
         self.label_ip.config(bg='#DADADA', fg='black')
         self.label_ip.pack(side='top', pady=5)
 
-        self.textbox_ip = tk.Entry(self, width=50)
+        self.textbox_ip = tk.Entry(top_frame, width=50)
         self.textbox_ip.insert(0, self.get_local_ip())
         self.textbox_ip.pack(side='top', pady=5)
 
         # TODO: Display more information about ip address/mac address?
         # See: https://www.studytonight.com/network-programming-in-python/integrating-port-scanner-with-nmap
-        self.button_scan = tk.Button(self, text="Scan local network", command=self.update_local, width=50)
+        self.button_scan = tk.Button(top_frame, text="Scan local network", command=self.update_local, width=50)
         self.button_scan.config(bg='#DADADA', fg='black')
         self.button_scan.pack(side='top', pady=15)
 
-        self.ip_box = tk.Listbox(self, width=75, selectmode=tk.SINGLE)
+        self.ip_box = tk.Listbox(top_frame, width=75, selectmode=tk.SINGLE)
         self.ip_box.pack(side='top', pady=5)
 
-        # TODO: add command for setting global target(s)
-        self.button_target = tk.Button(self, text="Set target", command=self.set_target, width=50)
-        self.button_target.config(bg='#DADADA', fg='black')
-        self.button_target.pack(pady=5)
-
-        self.button_victim = tk.Button(self, text="Set victim", command=self.set_victim, width=50)
+        self.button_victim = tk.Button(button_set_frame, text="Set victim", command=self.set_victim, width=15)
         self.button_victim.config(bg='#DADADA', fg='black')
-        self.button_victim.pack(padx=5)
+        self.button_victim.place(relx=0.43, rely=0.5, anchor=tk.CENTER)
 
-        self.label_victim = tk.Label(self, text="Victim: None")
+        # TODO: add command for setting global target(s)
+        self.button_target = tk.Button(button_set_frame, text="Set target", command=self.set_target, width=15)
+        self.button_target.config(bg='#DADADA', fg='black')
+        self.button_target.place(relx=0.57, rely=0.5, anchor=tk.CENTER)
+
+        self.label_victim = tk.Label(label_frame, text="Victim: None")
         self.label_victim.config(bg='#DADADA', fg='black')
-        self.label_victim.pack(side='top', pady=5)
+        self.label_victim.place(relx=0.43, rely=0.5, anchor=tk.CENTER)
 
-        self.label_target = tk.Label(self, text="Target: None")
+        self.label_target = tk.Label(label_frame, text="Target: None")
         self.label_target.config(bg='#DADADA', fg='black')
-        self.label_target.pack(side='top', pady=5)
+        self.label_target.place(relx=0.57, rely=0.5, anchor=tk.CENTER)
 
-        self.button_start = tk.Button(self, text="Start poisoning", command=self.start_arp)
+        self.button_start = tk.Button(bottom_frame, text="Start poisoning", command=self.start_arp, width=15)
         self.button_start.config(bg='#DADADA', fg='black')
-        self.button_start.pack(side='top', pady=5)
+        self.button_start.place(relx=0.43, rely=0.5, anchor=tk.CENTER)
         self.button_start.config(state=tk.DISABLED)
 
-        self.button_stop = tk.Button(self, text="Stop poisoning", command=self.stop_arp)
+        self.button_stop = tk.Button(bottom_frame, text="Stop poisoning", command=self.stop_arp, width=15)
         self.button_stop.config(bg='#DADADA', fg='black')
-        self.button_stop.pack(side='top', pady=5)
+        self.button_stop.place(relx=0.57, rely=0.5, anchor=tk.CENTER)
         self.button_stop.config(state=tk.DISABLED)
 
     def update_local(self):
@@ -78,18 +95,16 @@ class AttackARPFrame(tk.Frame):
 
     @staticmethod
     def get_local_ip():
-        # TODO: Add text escaping (special symbols) & verify if valid ip?
+        # TODO: Text escaping/converting to host model, and adding (default) behind the text?
         gws = netifaces.gateways()
         return str(gws['default'][netifaces.AF_INET][0]) + '/24'
 
     def set_target(self):
         # TODO: Extend to MULTIPLE rather than SINGLE
-        target = self.ip_box.get(self.ip_box.curselection())
-
-        if len(target) == 0:
-            # TODO: display error message
-            print('No target selected')
+        if self.ip_box.index('end') == 0:
+            self.controller.log.update_stat('No target has been selected')
         else:
+            target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
             target = str(target).split('at', 1)[1]
             self.controller.log.update_out(target + ' has been set as the target IP address')
@@ -97,12 +112,10 @@ class AttackARPFrame(tk.Frame):
             self.enable_start()
 
     def set_victim(self):
-        victim = self.ip_box.get(self.ip_box.curselection())
-
-        if len(victim) == 0:
-            # TODO: display error message
-            print('No target selected')
+        if self.ip_box.index('end') == 0:
+            self.controller.log.update_stat('No victim has been selected')
         else:
+            victim = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
             victim = str(victim).split('at', 1)[1]
             self.controller.log.update_out(victim + ' has been set as the victim IP address')
@@ -113,17 +126,22 @@ class AttackARPFrame(tk.Frame):
         victim_text = self.label_victim.cget('text')
         target_text = self.label_target.cget('text')
 
-        print(victim_text)
-        print(target_text)
         if (victim_text != 'Victim: None') and (target_text != 'Target: None'):
             self.button_start.config(state=tk.NORMAL)
 
     def start_arp(self):
+        # TODO: implement
         self.button_stop.config(state=tk.NORMAL)
         self.button_start.config(state=tk.DISABLED)
+
+        self.controller.log.update_out('starting ARP poisoning')
+        self.controller.log.update_stat('ARP poisoning is active')
         return
 
     def stop_arp(self):
+        # TODO: implement
         self.button_start.config(state=tk.NORMAL)
         self.button_stop.config(state=tk.DISABLED)
+
+        self.controller.log.update_out('stopping ARP poisoning')
         return
