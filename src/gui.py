@@ -35,6 +35,7 @@ class MainApplication(tk.Frame):
         style.element_create('Plain.Notebook.tab', 'from', 'default')
         style.theme_use('classic')
 
+        # TODO: Make lines below work
         style.configure("color.TButton", bg='#DADADA', fg='black')
         style.configure("color.TLabel", bg='#DADADA', fg='black')
 
