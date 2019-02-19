@@ -55,8 +55,8 @@ class MainApplication(tk.Frame):
         """
         x_start = int(self.winfo_screenwidth() * 0.2)
         y_start = int(self.winfo_screenheight() * 0.2)
-        width = int(self.winfo_screenwidth() * 0.5)
-        height = int(self.winfo_screenheight() * 0.7)
+        width = int(self.winfo_screenwidth() * 0.25)
+        height = int(self.winfo_screenheight() * 0.6)
 
         parent.geometry('%dx%d+%d+%d' % (width, height, x_start, y_start))
         parent.resizable(0, 0)
@@ -74,8 +74,8 @@ class MainApplication(tk.Frame):
         self.notebook = ttk.Notebook(self)
         self.log = LoggingFrame(parent=self)
 
-        self.notebook.grid(row=0, column=0, columnspan=100, rowspan=21, sticky='NSWE')
-        self.log.grid(row=21, column=0, columnspan=100, rowspan=100, sticky='NSWE')
+        self.notebook.grid(row=0, column=0, columnspan=100, rowspan=31, sticky='NSWE')
+        self.log.grid(row=31, column=0, columnspan=100, rowspan=100, sticky='NSWE')
 
         self.tabs = {}
         self.tab_map = OrderedDict([
