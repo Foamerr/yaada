@@ -51,10 +51,12 @@ class AttackARPFrame(tk.Frame):
         self.button_start = tk.Button(self, text="Start poisoning", command=self.start_arp)
         self.button_start.config(bg='#DADADA', fg='black')
         self.button_start.pack(side='top', pady=5)
+        self.button_start.config(state=tk.DISABLED)
 
         self.button_stop = tk.Button(self, text="Stop poisoning", command=self.stop_arp)
         self.button_stop.config(bg='#DADADA', fg='black')
         self.button_stop.pack(side='top', pady=5)
+        self.button_stop.config(state=tk.DISABLED)
 
     def update_local(self):
         self.ip_box.delete(0, tk.END)
@@ -92,6 +94,7 @@ class AttackARPFrame(tk.Frame):
             target = str(target).split('at', 1)[1]
             self.controller.log.update_out(target + ' has been set as the target IP address')
             self.label_target.config(text=('Target: ' + target))
+            self.enable_start()
 
     def set_victim(self):
         victim = self.ip_box.get(self.ip_box.curselection())
@@ -104,9 +107,23 @@ class AttackARPFrame(tk.Frame):
             victim = str(victim).split('at', 1)[1]
             self.controller.log.update_out(victim + ' has been set as the victim IP address')
             self.label_victim.config(text=('Victim: ' + victim))
+            self.enable_start()
+
+    def enable_start(self):
+        victim_text = self.label_victim.cget('text')
+        target_text = self.label_target.cget('text')
+
+        print(victim_text)
+        print(target_text)
+        if (victim_text != 'Victim: None') and (target_text != 'Target: None'):
+            self.button_start.config(state=tk.NORMAL)
 
     def start_arp(self):
+        self.button_stop.config(state=tk.NORMAL)
+        self.button_start.config(state=tk.DISABLED)
         return
 
     def stop_arp(self):
+        self.button_start.config(state=tk.NORMAL)
+        self.button_stop.config(state=tk.DISABLED)
         return
