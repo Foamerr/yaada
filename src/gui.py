@@ -55,7 +55,7 @@ class MainApplication(tk.Frame):
         x_start = int(self.winfo_screenwidth() * 0.2)
         y_start = int(self.winfo_screenheight() * 0.2)
         width = int(self.winfo_screenwidth() * 0.5)
-        height = int(self.winfo_screenheight() * 0.55)
+        height = int(self.winfo_screenheight() * 0.7)
 
         parent.geometry('%dx%d+%d+%d' % (width, height, x_start, y_start))
         parent.resizable(0, 0)
