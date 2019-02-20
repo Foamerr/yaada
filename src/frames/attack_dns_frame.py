@@ -11,6 +11,7 @@ class AttackDNSFrame(tk.Frame):
         self.controller = controller
         self.configure(bg='#DADADA')
 
-        self.label_welcome = tk.Label(self, text='Welcome to tab used for DNS spoofing.')
+        self.label_welcome = tk.Label(self, text='Welcome to tab used for DNS spoofing.', font=(self.controller.font,
+                                                                                                self.controller.font_size))
         self.label_welcome.config(bg='#DADADA', fg='black')
         self.label_welcome.pack(side='top', pady=20)

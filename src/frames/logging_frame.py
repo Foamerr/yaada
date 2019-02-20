@@ -5,16 +5,18 @@ from datetime import datetime
 class LoggingFrame(tk.Frame):
     stat = '[#] '
 
-    def __init__(self, parent):
+    def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self.controller = controller
         self.configure(bg='black')
         self.pack_propagate(False)
-        self.empty_stat = 'the current status will be displayed here'
+        self.empty_stat = 'The current status will be displayed here'
         self.stat_text = None
         self.stat_msg = None
         self.out_text = 'output («) and input (») will be displayed here'
         self.out_msg = None
         self.out_list = None
+        self.font_size = 11
 
         self.create_stat_bar()
         self.create_out_box()
@@ -29,7 +31,8 @@ class LoggingFrame(tk.Frame):
 
         scroll = tk.Scrollbar(self.out_msg)
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
-        self.out_list = tk.Listbox(self.out_msg, bg='black', fg='white', yscrollcommand=scroll.set)
+        self.out_list = tk.Listbox(self.out_msg, bg='black', fg='white', yscrollcommand=scroll.set,
+                                   font=(self.controller.font, self.controller.font_size))
         scroll.config(command=self.out_list.yview)
         self.out_list.pack(fill=tk.BOTH, side=tk.TOP, anchor=tk.W, expand=tk.TRUE)
         self.out_list.insert(tk.END, self.get_prefix_out().__add__(self.out_text))
@@ -39,7 +42,8 @@ class LoggingFrame(tk.Frame):
         Creates a status bar
         """
         self.stat_text = self.empty_stat
-        self.stat_msg = tk.Message(self, text=self.stat.__add__(self.stat_text), width=600, anchor=tk.W)
+        self.stat_msg = tk.Message(self, text=self.stat.__add__(self.stat_text), width=600, anchor=tk.W,
+                                   font=(self.controller.font, self.controller.font_size))
         self.stat_msg.pack(anchor=tk.W, fill=tk.X, side=tk.BOTTOM)
         self.stat_msg.config(bg='#DADADA', fg='black')
 

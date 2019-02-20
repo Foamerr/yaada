@@ -12,19 +12,23 @@ class HelpFrame(tk.Frame):
         self.controller = controller
         self.configure(bg='#DADADA')
 
-        self.label_welcome = tk.Label(self, text='One can get information and help regarding the application here.')
+        self.label_welcome = tk.Label(self, text='One can get information and help regarding the application here.',
+                                      font=(self.controller.font, self.controller.font_size))
         self.label_welcome.config(bg='#DADADA', fg='black')
         self.label_welcome.pack(side='top', pady=10)
 
-        self.button_about = tk.Button(self, text='About', command=self.dis_about, width=15)
+        self.button_about = tk.Button(self, text='About', command=self.dis_about, width=15,
+                                      font=(self.controller.font, self.controller.font_size))
         self.button_about.config(bg='#DADADA', fg='black')
         self.button_about.pack(side='top', pady=5)
 
-        self.button_doc = tk.Button(self, text='Documentation', command=self.dis_doc, width=15)
+        self.button_doc = tk.Button(self, text='Documentation', command=self.dis_doc, width=15,
+                                    font=(self.controller.font, self.controller.font_size))
         self.button_doc.config(bg='#DADADA', fg='black')
         self.button_doc.pack(side='top', pady=5)
 
-        self.button_doc = tk.Button(self, text='Exit', command=self.quit, width=15)
+        self.button_doc = tk.Button(self, text='Exit', command=self.quit, width=15, font=(self.controller.font,
+                                                                                          self.controller.font_size))
         self.button_doc.config(bg='#DADADA', fg='black')
         self.button_doc.pack(side='top', pady=5)
 

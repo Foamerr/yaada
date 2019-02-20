@@ -16,10 +16,10 @@ class AttackARPFrame(tk.Frame):
         top_frame = tk.Frame(self)
         top_frame.configure(bg='#DADADA')
 
-        label_frame = tk.Frame(self)
+        label_frame = tk.Frame(self, height=15)
         label_frame.configure(bg='#DADADA')
 
-        button_set_frame = tk.Frame(self)
+        button_set_frame = tk.Frame(self, height=15)
         button_set_frame.configure(bg='#DADADA')
 
         bottom_frame = tk.Frame(self)
@@ -28,49 +28,59 @@ class AttackARPFrame(tk.Frame):
         # top_frame.pack(side="top", fill="both", expand=True)
         top_frame.pack(side="top", fill="x")
         button_set_frame.pack(side="top", fill="both", expand=True)
-        label_frame.pack(side="top", fill="both", expand=True)
         bottom_frame.pack(side="bottom", fill="both", expand=True)
+        label_frame.pack(side="bottom", fill="both", expand=True)
 
-        self.label_ip = tk.Label(top_frame, text="Gateway to use (already provided is default)")
+        self.label_ip = tk.Label(top_frame, text="Gateway to use (already provided is default)",
+                                 font=(self.controller.font, self.controller.font_size))
         self.label_ip.config(bg='#DADADA', fg='black')
         self.label_ip.pack(side='top', pady=5)
 
-        self.textbox_ip = tk.Entry(top_frame, width=30)
+        self.textbox_ip = tk.Entry(top_frame, width=20, font=(self.controller.font, self.controller.font_size),
+                                   justify='center')
         self.textbox_ip.insert(0, self.get_local_ip())
         self.textbox_ip.pack(side='top', pady=5)
 
         # TODO: Display more information about ip address/mac address?
         # See: https://www.studytonight.com/network-programming-in-python/integrating-port-scanner-with-nmap
-        self.button_scan = tk.Button(top_frame, text="Scan", command=self.update_local, width=45)
+        self.button_scan = tk.Button(top_frame, text="Scan", command=self.update_local, width=30,
+                                     font=(self.controller.font, self.controller.font_size))
         self.button_scan.config(bg='#DADADA', fg='black')
-        self.button_scan.pack(side='top', pady=15)
+        self.button_scan.pack(side='top', pady=5)
 
-        self.ip_box = tk.Listbox(top_frame, width=75, selectmode=tk.SINGLE)
-        self.ip_box.pack(side='top', pady=5)
+        self.ip_box = tk.Listbox(top_frame, width=50, selectmode=tk.SINGLE,
+                                 font=(self.controller.font, self.controller.font_size), justify='center')
+        self.ip_box.pack(side='top', pady=10)
 
-        self.button_victim = tk.Button(button_set_frame, text="Set victim", command=self.set_victim, width=15)
+        self.button_victim = tk.Button(button_set_frame, text="Set victim", command=self.set_victim, width=15,
+                                       font=(self.controller.font, self.controller.font_size))
         self.button_victim.config(bg='#DADADA', fg='black')
         self.button_victim.place(relx=0.35, rely=0.5, anchor=tk.CENTER)
 
         # TODO: add command for setting global target(s)
-        self.button_target = tk.Button(button_set_frame, text="Set target", command=self.set_target, width=15)
+        self.button_target = tk.Button(button_set_frame, text="Set target", command=self.set_target, width=15,
+                                       font=(self.controller.font, self.controller.font_size))
         self.button_target.config(bg='#DADADA', fg='black')
         self.button_target.place(relx=0.65, rely=0.5, anchor=tk.CENTER)
 
-        self.label_victim = tk.Label(label_frame, text="Victim: None")
+        self.label_victim = tk.Label(label_frame, text="Victim: None", font=(self.controller.font,
+                                                                             self.controller.font_size))
         self.label_victim.config(bg='#DADADA', fg='black')
         self.label_victim.place(relx=0.35, rely=0.5, anchor=tk.CENTER)
 
-        self.label_target = tk.Label(label_frame, text="Target: None")
+        self.label_target = tk.Label(label_frame, text="Target: None", font=(self.controller.font,
+                                                                             self.controller.font_size))
         self.label_target.config(bg='#DADADA', fg='black')
         self.label_target.place(relx=0.65, rely=0.5, anchor=tk.CENTER)
 
-        self.button_start = tk.Button(bottom_frame, text="Start poisoning", command=self.start_arp, width=15)
+        self.button_start = tk.Button(bottom_frame, text="Start poisoning", command=self.start_arp, width=15,
+                                      font=(self.controller.font, self.controller.font_size))
         self.button_start.config(bg='#DADADA', fg='black')
-        self.button_start.pack(side='top', pady=20)
+        self.button_start.pack(side='top', pady=10)
         self.button_start.config(state=tk.DISABLED)
 
-        self.button_stop = tk.Button(bottom_frame, text="Stop poisoning", command=self.stop_arp, width=15)
+        self.button_stop = tk.Button(bottom_frame, text="Stop poisoning", command=self.stop_arp, width=15,
+                                     font=(self.controller.font, self.controller.font_size))
         self.button_stop.config(bg='#DADADA', fg='black')
         self.button_stop.pack(side='top')
         self.button_stop.config(state=tk.DISABLED)

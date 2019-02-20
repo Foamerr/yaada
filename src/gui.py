@@ -19,6 +19,8 @@ class MainApplication(tk.Frame):
         self.winfo_toplevel().title("hackerman")
         self.configure(bg='black')
 
+        self.font = "Times New Roman"
+        self.font_size = 11
         self.notebook = None
         self.tabs = None
         self.tab_map = None
@@ -29,15 +31,20 @@ class MainApplication(tk.Frame):
         # self.create_menu_bar(parent)
         self.create_tabs()
 
-    @staticmethod
-    def set_style():
+    def set_style(self):
         style = ttk.Style()
         style.element_create('Plain.Notebook.tab', 'from', 'default')
-        style.theme_use('classic')
 
         # TODO: Make lines below work
         style.configure("color.TButton", bg='#DADADA', fg='black')
         style.configure("color.TLabel", bg='#DADADA', fg='black')
+
+        style.theme_use('classic')
+
+        customed_style = ttk.Style()
+        customed_style.configure('Custom.TNotebook.Tab', padding=[10, 8], font=(self.font, self.font_size))
+
+        #
 
         # style.layout("TNotebook.Tab",
         #              [('Plain.Notebook.tab', {'children':
@@ -71,8 +78,8 @@ class MainApplication(tk.Frame):
             self.columnconfigure(row, weight=1)
             row += 1
 
-        self.notebook = ttk.Notebook(self)
-        self.log = LoggingFrame(parent=self)
+        self.notebook = ttk.Notebook(self, style='Custom.TNotebook')
+        self.log = LoggingFrame(parent=self, controller=self)
 
         self.notebook.grid(row=0, column=0, columnspan=100, rowspan=31, sticky='NSWE')
         self.log.grid(row=31, column=0, columnspan=100, rowspan=100, sticky='NSWE')
