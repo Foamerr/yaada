@@ -11,7 +11,69 @@ class AttackDNSFrame(tk.Frame):
         self.controller = controller
         self.configure(bg='#DADADA')
 
-        self.label_welcome = tk.Label(self, text='Welcome to tab used for DNS spoofing.', font=(self.controller.font,
-                                                                                                self.controller.font_size))
-        self.label_welcome.config(bg='#DADADA', fg='black')
-        self.label_welcome.pack(side='top', pady=20)
+        top_frame = tk.Frame(self)
+        top_frame.configure(bg='#DADADA')
+
+        bottom_frame = tk.Frame(self)
+        bottom_frame.configure(bg='#DADADA')
+
+        top_frame.pack(side="top", fill="x")
+        bottom_frame.pack(side="bottom", fill="both", expand=True)
+
+        self.label_site = tk.Label(top_frame, text="Target domain (Website URL/IP address)", font=(self.controller.font, self.controller.font_size))
+        self.label_site.config(bg='#DADADA', fg='black')
+        self.label_site.pack(side='top', pady=5)
+
+        self.textbox_site = tk.Entry(top_frame, width=20, font=(self.controller.font, self.controller.font_size), justify='center')
+        # self.textbox_site.insert(0, self.get_local_ip())
+        self.textbox_site.pack(side='top', pady=5)
+
+        self.label_victim = tk.Label(top_frame, text="Victim IP", font=(self.controller.font, self.controller.font_size))
+        self.label_victim.config(bg='#DADADA', fg='black')
+        self.label_victim.pack(side='top', pady=5)
+
+        self.textbox_victim = tk.Entry(top_frame, width=20, font=(self.controller.font, self.controller.font_size), justify='center')
+        self.textbox_victim.pack(side='top', pady=5)
+
+        self.label_target = tk.Label(top_frame, text="Target IP",
+                                     font=(self.controller.font, self.controller.font_size))
+        self.label_target.config(bg='#DADADA', fg='black')
+        self.label_target.pack(side='top', pady=5)
+
+        self.textbox_target = tk.Entry(top_frame, width=20, font=(self.controller.font, self.controller.font_size),
+                                       justify='center')
+        self.textbox_target.pack(side='top', pady=5)
+
+        self.button_start = tk.Button(bottom_frame, text="Start spoofing", command=self.start_dns, width=15,
+                                      font=(self.controller.font, self.controller.font_size))
+        self.button_start.config(bg='#DADADA', fg='black')
+        self.button_start.pack(side='top', pady=10)
+        self.button_start.config(state=tk.DISABLED)
+
+        self.button_stop = tk.Button(bottom_frame, text="Stop spoofing", command=self.stop_dns, width=15,
+                                     font=(self.controller.font, self.controller.font_size))
+        self.button_stop.config(bg='#DADADA', fg='black')
+        self.button_stop.pack(side='top')
+        self.button_stop.config(state=tk.DISABLED)
+
+    def start_dns(self):
+        domain = self.textbox_site.get()
+        target = self.textbox_target.get()
+        victim = self.textbox_victim.get()
+
+        # TODO: check if domain is a website or a valid IP, check if target & victim are valid IP addresses.
+        self.controller.log.update_out('Domain, target, and victim successfully set')
+
+        # TODO: implement in dns_attack.py (?)
+        self.controller.log.update_out('Starting DNS spoofing')
+
+        self.controller.log.update_stat("DNS spoofing provided victim's domain with target IP")
+        self.controller.log.update_out('DNS spoofing active')
+
+    def stop_dns(self):
+        # TODO: implement in dns_attack.py (?)
+        self.controller.log.update_out('Stopping DNS spoofing')
+
+        self.controller.log.update_out('DNS spoofing stopped')
+        self.controller.log.update_stat("Stopped DNS spoofing")
+        return

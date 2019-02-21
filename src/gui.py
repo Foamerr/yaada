@@ -19,7 +19,7 @@ class MainApplication(tk.Frame):
         self.winfo_toplevel().title("hackerman")
         self.configure(bg='black')
 
-        self.font = "Times New Roman"
+        self.font = "Georgia"
         self.font_size = 11
         self.notebook = None
         self.tabs = None
@@ -35,26 +35,13 @@ class MainApplication(tk.Frame):
         style = ttk.Style()
         style.element_create('Plain.Notebook.tab', 'from', 'default')
 
-        # TODO: Make lines below work
-        style.configure("color.TButton", bg='#DADADA', fg='black')
-        style.configure("color.TLabel", bg='#DADADA', fg='black')
-
         style.theme_use('classic')
 
         customed_style = ttk.Style()
         customed_style.configure('Custom.TNotebook.Tab', padding=[10, 8], font=(self.font, self.font_size))
-
-        #
-
-        # style.layout("TNotebook.Tab",
-        #              [('Plain.Notebook.tab', {'children':
-        #               [('Notebook.padding', {'side': 'top', 'children':
-        #                 [('Notebook.focus', {'side': 'top', 'children':
-        #                   [('Notebook.label', {'side': 'top', 'sticky': ''})], 'sticky': 'NSWE'})], 'sticky': 'NSWE'})],
-        #                     'sticky': 'NSWE'})])
-        # style.configure("TNotebook", background='black', borderwidth=0)
-        # style.configure("TNotebook.Tab", background='black', foreground='white', lightcolor='gray', borderwidth=2)
-        # style.configure("TFrame", background='black', foreground='white', borderwidth=0)
+        # Could use these, but then you have to redo the whole `classic' theme as well :/
+        customed_style.configure('Custom.TButton', bg='#DADADA', fg='black', font=(self.font, self.font_size))
+        customed_style.configure('Custom.TLabel', bg='#DADADA', fg='black', font=(self.font, self.font_size))
 
     def set_size(self, parent):
         """

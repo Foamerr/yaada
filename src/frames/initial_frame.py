@@ -21,7 +21,7 @@ class InitialFrame(tk.Frame):
         top_frame.pack(side="top", fill="x")
         bottom_frame.pack(side="top", fill="both", expand=True)
 
-        self.label_welcome = tk.Label(top_frame, text='Hackerman', font=(self.controller.font, 44, "bold"))
+        self.label_welcome = tk.Label(top_frame, text='Hackerman', font=(self.controller.font, 44))
         self.label_welcome.config(bg='#DADADA', fg='black')
         self.label_welcome.pack(side='top', pady=10)
         self.labelframe_gen_widget = tk.LabelFrame(bottom_frame, text="General description",
