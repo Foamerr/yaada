@@ -13,7 +13,7 @@ class LoggingFrame(tk.Frame):
         self.empty_stat = 'The current status will be displayed here'
         self.stat_text = None
         self.stat_msg = None
-        self.out_text = 'output («) and input (») will be displayed here'
+        self.out_text = 'output will be displayed here'
         self.out_msg = None
         self.out_list = None
         self.font_size = 11
@@ -60,7 +60,6 @@ class LoggingFrame(tk.Frame):
         self.stat_msg.configure(text=self.stat.__add__(self.stat_text))
         self.update()
 
-    # TODO: combine out and in and simply consider 2 cases that have to be passed as parameters
     def update_out(self, msg):
         """
         Updates the output by either appending @msg or setting the text as @msg.
@@ -70,19 +69,6 @@ class LoggingFrame(tk.Frame):
         self.out_list.select_set(tk.END)
         self.out_list.yview(tk.END)
 
-    def update_in(self, msg):
-        """
-        Updates the output as input by either appending @message or setting the text as @message.
-        """
-        self.out_list.insert(tk.END, self.get_prefix_in().__add__(msg))
-        self.out_list.select_clear(self.out_list.size() - 2)
-        self.out_list.select_set(tk.END)
-        self.out_list.yview(tk.END)
-
     @staticmethod
     def get_prefix_out():
-        return ' [« ' + str(datetime.now().time().strftime("%H:%M:%S")) + "] "
-
-    @staticmethod
-    def get_prefix_in():
-        return ' [» ' + str(datetime.now().time().strftime("%H:%M:%S")) + "] "
+        return ' [' + str(datetime.now().time().strftime("%H:%M:%S")) + " «] "

@@ -144,6 +144,7 @@ class AttackARPFrame(tk.Frame):
 
     def start_arp(self):
         # TODO: implement in arp_attack.py (?)
+        # TODO: if target == victim, raise warning
         self.button_stop.config(state=tk.NORMAL)
         self.button_start.config(state=tk.DISABLED)
 

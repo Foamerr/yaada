@@ -74,7 +74,7 @@ class MainApplication(tk.Frame):
         self.tabs = {}
         self.tab_map = OrderedDict([
             (InitialFrame, 'Home'),
-            (AttackARPFrame, 'ARP Poisoning'),
+            (AttackARPFrame, 'ARP Spoofing'),
             (AttackDNSFrame, 'DNS Spoofing'),
             (HelpFrame, 'Help')
         ])
@@ -85,40 +85,6 @@ class MainApplication(tk.Frame):
             frame = tab(parent=self.notebook, controller=self)
             self.notebook.add(frame, text=frame_name)
         self.tabs[tab.__name__] = frame
-
-    # def create_menu_bar(self, parent):
-    #     """
-    #     Creates a menu bar with respect to @parent
-    #     """
-    #     menu_bar = tk.Menu(self)
-    #     help_menu = tk.Menu(menu_bar, tearoff=0)
-    #
-    #     help_menu.add_command(label="About", command=self.dis_about)
-    #     help_menu.add_command(label="Documentation", command=self.dis_doc)
-    #     # help_menu.add_separator()
-    #
-    #     menu_bar.add_cascade(label="Help", menu=help_menu)
-    #     menu_bar.add_command(label="Exit", command=root.quit)
-    #
-    #     parent.config(menu=menu_bar)
-
-    # @staticmethod
-    # def dis_about():
-    #     """
-    #     Displays a message box containing the `about' section information
-    #     """
-    #     messagebox.showinfo("About", "Hackerman is a tool for ARP and DNS spoofing \n"
-    #                                  "with different modalities that automatically \n"
-    #                                  "poisons ARP caches and uses DNS queries to \n"
-    #                                  "poison recursive DNS cache. \n"
-    #                                  "Created by Stijn Derks and Nick van de Waterlaat")
-    #
-    # @staticmethod
-    # def dis_doc():
-    #     """
-    #     Displays a message box containing the `Documentation' section information
-    #     """
-    #     messagebox.showinfo("Documentation", "Lorem ipsum...")
 
 
 if __name__ == '__main__':
