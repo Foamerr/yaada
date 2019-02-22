@@ -1,6 +1,5 @@
 import tkinter as tk
 import discovery as dis
-import netifaces
 from tkinter import messagebox
 
 
@@ -31,11 +30,9 @@ class AttackARPFrame(tk.Frame):
 
         self.textbox_ip = tk.Entry(top_frame, width=20, font=(self.controller.font, self.controller.font_size),
                                    justify='center')
-        self.textbox_ip.insert(0, (self.get_default_gateway() + '/24'))
+        self.textbox_ip.insert(0, (dis.get_default_gateway() + '/24'))
         self.textbox_ip.pack(side='top', pady=5)
 
-        # TODO: Display more information about ip address/mac address?
-        # See: https://www.studytonight.com/network-programming-in-python/integrating-port-scanner-with-nmap
         self.button_scan = tk.Button(top_frame, text="Scan", command=self.update_local, width=30,
                                      font=(self.controller.font, self.controller.font_size))
         self.button_scan.config(bg='#DADADA', fg='black')
@@ -96,12 +93,6 @@ class AttackARPFrame(tk.Frame):
 
         self.controller.log.update_stat('Finished searching for local network addresses')
         self.controller.log.update_out('finished searching for local network addresses')
-
-    @staticmethod
-    def get_default_gateway():
-        # TODO: Text escaping/converting to host model, and adding (default) behind the text?
-        gws = netifaces.gateways()
-        return str(gws['default'][netifaces.AF_INET][0])
 
     def set_target(self):
         try:
