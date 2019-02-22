@@ -1,4 +1,6 @@
 import tkinter as tk
+from validation import *
+from tkinter import messagebox
 
 
 class AttackDNSFrame(tk.Frame):
@@ -73,7 +75,12 @@ class AttackDNSFrame(tk.Frame):
         target = self.target_ip.get()
         victim = self.victim_ip.get()
 
-        # TODO: check if domain is a website or a valid IP, check if target & victim are valid IP addresses.
+        if not are_valid_address([target]):
+            messagebox.showerror("Error",  "The target IP address is not a valid IPv4 or IPv6 IP address.")
+
+        if not are_valid_address([victim]):
+            messagebox.showerror("Error", "The victim IP address is not a valid IPv4 or IPv6 IP address.")
+
         self.controller.log.update_out('Domain, target, and victim successfully set')
 
         # TODO: implement in dns_attack.py (?)

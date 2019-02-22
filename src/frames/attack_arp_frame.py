@@ -79,7 +79,6 @@ class AttackARPFrame(tk.Frame):
         self.button_stop.config(state=tk.DISABLED)
 
     def update_local(self):
-        # TODO: check if address is a valid IP. Otherwise, raise warning
         address = self.textbox_ip.get()
 
         self.ip_box.delete(0, tk.END)
@@ -105,7 +104,6 @@ class AttackARPFrame(tk.Frame):
         return str(gws['default'][netifaces.AF_INET][0])
 
     def set_target(self):
-        # TODO: Extend to MULTIPLE rather than SINGLE
         try:
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
@@ -154,7 +152,6 @@ class AttackARPFrame(tk.Frame):
 
     def start_arp(self):
         # TODO: implement in arp_attack.py (?)
-        # TODO: if target == victim, raise warning
 
         if self.target in self.victims:
             messagebox.showerror("Error", "You cannot not set the target as a victim.")
