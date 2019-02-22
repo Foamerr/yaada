@@ -9,7 +9,7 @@ def are_valid_address(addresses):
     :return True if all addresses in addresses are valid IPv4 or IPv6 addresses
     """
     for address in addresses:
-        if not is_ipv6_address(address) or is_ipv4_address(address):
+        if not (is_ipv6_address(address) or is_ipv4_address(address)):
             return False
     return True
 
