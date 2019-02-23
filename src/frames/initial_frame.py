@@ -8,7 +8,8 @@ class InitialFrame(tk.Frame):
         Initialises GUI of the frame used for the initially showed tab
         """
         tk.Frame.__init__(self, parent)
-        self.controller = controller, self.configure(bg='#DADADA')
+        self.controller = controller
+        self.configure(bg='#DADADA')
 
         # SET FRAMES #
         top_frame, bottom_frame = tk.Frame(self), tk.Frame(self)
@@ -26,10 +27,13 @@ class InitialFrame(tk.Frame):
                      "provides additional ways to get help and other documentation of the " \
                      "tool."
 
-        self.label_welcome = tk.Label(top_frame, text='Hackerman', font=(self.controller.font, 44))
+        self.label_welcome = tk.Label(top_frame,
+                                      text='Hackerman',
+                                      font=(self.controller.font, 44))
         self.label_welcome.config(bg='#DADADA', fg='black')
         self.label_welcome.pack(side='top', pady=10)
-        self.labelframe_gen_widget = tk.LabelFrame(bottom_frame, text="General description",
+        self.labelframe_gen_widget = tk.LabelFrame(bottom_frame,
+                                                   text="General description",
                                                    font=(self.controller.font, self.controller.font_size, "bold"))
         self.labelframe_gen_widget.config(bg='#DADADA', fg='black')
         self.label_gen_widget = tk.Label(self.labelframe_gen_widget,

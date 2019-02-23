@@ -46,7 +46,8 @@ class LoggingFrame(tk.Frame):
         self.stat_text = self.empty_stat
         self.stat_msg = tk.Message(self,
                                    text=self.stat.__add__(self.stat_text),
-                                   width=600, anchor=tk.W,
+                                   width=600,
+                                   anchor=tk.W,
                                    font=(self.controller.font, self.controller.font_size))
         self.stat_msg.pack(anchor=tk.W, fill=tk.X, side=tk.BOTTOM)
         self.stat_msg.config(bg='#DADADA', fg='black')

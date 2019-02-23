@@ -10,7 +10,10 @@ class HelpFrame(tk.Frame):
         Initialises GUI of the frame used for the help tab
         """
         tk.Frame.__init__(self, parent)
-        self.controller = controller, self.configure(bg='#DADADA')
+        self.controller = controller
+        self.configure(bg='#DADADA')
+        self.font = "Georgia"
+        self.font_size = 11
 
         self.label_welcome = tk.Label(self,
                                       text='One can get information and help regarding the application here.',

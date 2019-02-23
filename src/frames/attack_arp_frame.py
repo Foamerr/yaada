@@ -10,9 +10,12 @@ class AttackARPFrame(tk.Frame):
         Initialises GUI of the frame used for selecting the target
         """
         tk.Frame.__init__(self, parent)
-        self.controller = controller, self.configure(bg='#DADADA')
+        self.controller = controller
+        self.configure(bg='#DADADA')
         self.victims = []
         self.target = None
+        self.font = "Georgia"
+        self.font_size = 11
 
         top_frame = tk.Frame(self)
         self.labelframe_in = tk.LabelFrame(top_frame,
@@ -162,7 +165,7 @@ class AttackARPFrame(tk.Frame):
                     result.append(entry)
                 strings = ', '.join(result)
                 self.controller.log.update_out(strings + ' have been set as the victims')
-                self.label_victim.config(text='Victims set, see log for details')
+                self.label_victim.config(text='Victims: ' + strings)
                 self.enable_start()
                 self.victims = strings
             else:

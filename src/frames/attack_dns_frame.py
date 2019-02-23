@@ -11,7 +11,8 @@ class AttackDNSFrame(tk.Frame):
         Initialises GUI of the frame used for the DNS spoofing
         """
         tk.Frame.__init__(self, parent)
-        self.controller = controller, self.configure(bg='#DADADA')
+        self.controller = controller
+        self.configure(bg='#DADADA')
 
         # FRAMES SETUP #
         text_box_width = 53

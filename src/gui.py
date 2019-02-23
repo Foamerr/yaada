@@ -19,7 +19,6 @@ class MainApplication(tk.Frame):
         self.parent = parent
         self.winfo_toplevel().title("hackerman")
         self.configure(bg='black')
-
         self.font = "Georgia"
         self.font_size = 11
         self.notebook = None
