@@ -1,6 +1,7 @@
 import tkinter as tk
-import discovery as dis
 from tkinter import messagebox
+
+import discovery as dis
 
 
 class AttackARPFrame(tk.Frame):
@@ -9,13 +10,11 @@ class AttackARPFrame(tk.Frame):
         Initialises GUI of the frame used for selecting the target
         """
         tk.Frame.__init__(self, parent)
-        self.controller = controller
-        self.configure(bg='#DADADA')
+        self.controller = controller, self.configure(bg='#DADADA')
         self.victims = []
         self.target = None
 
         top_frame = tk.Frame(self)
-
         self.labelframe_in = tk.LabelFrame(top_frame,
                                            text="Input",
                                            font=(self.controller.font, self.controller.font_size, "bold"))
@@ -77,12 +76,14 @@ class AttackARPFrame(tk.Frame):
         self.button_target.config(bg='#DADADA', fg='black')
         self.button_target.place(relx=0.30, rely=0.5, anchor=tk.CENTER)
 
-        self.labelframe_out = tk.LabelFrame(bottom_frame, text="Settings",
+        self.labelframe_out = tk.LabelFrame(bottom_frame,
+                                            text="Settings",
                                             font=(self.controller.font, self.controller.font_size, "bold"))
         self.labelframe_out.config(bg='#DADADA', fg='black')
         self.labelframe_out.pack(pady=0)
 
-        self.label_victim = tk.Label(self.labelframe_out, text="Victim(s): None",
+        self.label_victim = tk.Label(self.labelframe_out,
+                                     text="Victim(s): None",
                                      font=(self.controller.font, self.controller.font_size),
                                      width=53,
                                      anchor=tk.W,
@@ -90,7 +91,8 @@ class AttackARPFrame(tk.Frame):
         self.label_victim.config(bg='#DADADA', fg='black')
         self.label_victim.pack(side='top', padx=10, pady=5)
 
-        self.label_target = tk.Label(self.labelframe_out, text="Target: None",
+        self.label_target = tk.Label(self.labelframe_out,
+                                     text="Target: None",
                                      font=(self.controller.font, self.controller.font_size),
                                      width=53,
                                      anchor=tk.W,

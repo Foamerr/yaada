@@ -1,6 +1,7 @@
 import tkinter as tk
-from validation import *
 from tkinter import messagebox
+
+from validation import *
 
 
 class AttackDNSFrame(tk.Frame):
@@ -10,25 +11,27 @@ class AttackDNSFrame(tk.Frame):
         Initialises GUI of the frame used for the DNS spoofing
         """
         tk.Frame.__init__(self, parent)
-        self.controller = controller
-        self.configure(bg='#DADADA')
+        self.controller = controller, self.configure(bg='#DADADA')
 
         # FRAMES SETUP #
         text_box_width = 53
         top_frame, button_set_frame, bottom_frame = tk.Frame(self), tk.Frame(self, height=15), tk.Frame(self)
-        button_set_frame.configure(bg='#DADADA'), top_frame.configure(bg='#DADADA'), bottom_frame.configure(bg='#DADADA')
+        button_set_frame.configure(bg='#DADADA'), top_frame.configure(bg='#DADADA'), bottom_frame.configure(
+            bg='#DADADA')
 
         top_frame.pack(side="top", fill="x")
         button_set_frame.pack(side="top", fill="both", expand=True)
         bottom_frame.pack(side="bottom", fill="both", expand=True)
 
         # INPUT #
-        self.labelframe_in = tk.LabelFrame(top_frame, text="Input",
+        self.labelframe_in = tk.LabelFrame(top_frame,
+                                           text="Input",
                                            font=(self.controller.font, self.controller.font_size, "bold"))
         self.labelframe_in.config(bg='#DADADA', fg='black')
         self.labelframe_in.pack(pady=15)
 
-        self.label_site = tk.Label(self.labelframe_in, text="Target domain(s) (Separate multiple with a ', ')",
+        self.label_site = tk.Label(self.labelframe_in,
+                                   text="Target domain(s) (Separate multiple with a ', ')",
                                    font=(self.controller.font, self.controller.font_size))
         self.label_site.config(bg='#DADADA', fg='black')
         self.label_site.pack(side='top', pady=5)
@@ -38,7 +41,8 @@ class AttackDNSFrame(tk.Frame):
                                width=text_box_width)
         self.domain.pack(side='top', padx=10, pady=5)
 
-        self.label_victim = tk.Label(self.labelframe_in, text="Victim IP addresses (Separate multiple with a ', ')",
+        self.label_victim = tk.Label(self.labelframe_in,
+                                     text="Victim IP addresses (Separate multiple with a ', ')",
                                      font=(self.controller.font, self.controller.font_size))
         self.label_victim.config(bg='#DADADA', fg='black')
         self.label_victim.pack(side='top', pady=5)
@@ -48,7 +52,8 @@ class AttackDNSFrame(tk.Frame):
                                 width=text_box_width)
         self.victims.pack(side='top', padx=10, pady=5)
 
-        self.label_target = tk.Label(self.labelframe_in, text="Target IP",
+        self.label_target = tk.Label(self.labelframe_in,
+                                     text="Target IP",
                                      font=(self.controller.font, self.controller.font_size))
         self.label_target.config(bg='#DADADA', fg='black')
         self.label_target.pack(side='top', pady=5)
@@ -59,14 +64,16 @@ class AttackDNSFrame(tk.Frame):
         self.target.pack(side='top', padx=10, pady=5)
 
         # BUTTONS #
-        self.button_start = tk.Button(button_set_frame, text="Start spoofing",
+        self.button_start = tk.Button(button_set_frame,
+                                      text="Start spoofing",
                                       command=self.start_dns,
                                       width=15,
                                       font=(self.controller.font, self.controller.font_size))
         self.button_start.config(bg='#DADADA', fg='black')
         self.button_start.place(relx=0.30, rely=0.5, anchor=tk.CENTER)
 
-        self.button_stop = tk.Button(button_set_frame, text="Stop spoofing",
+        self.button_stop = tk.Button(button_set_frame,
+                                     text="Stop spoofing",
                                      command=self.stop_dns,
                                      width=15,
                                      font=(self.controller.font, self.controller.font_size))
@@ -77,12 +84,14 @@ class AttackDNSFrame(tk.Frame):
 
         # OUTPUT #
         # TODO: add wraplength for wrapping long text
-        self.labelframe_out = tk.LabelFrame(bottom_frame, text="Settings",
+        self.labelframe_out = tk.LabelFrame(bottom_frame,
+                                            text="Settings",
                                             font=(self.controller.font, self.controller.font_size, "bold"))
         self.labelframe_out.config(bg='#DADADA', fg='black')
         self.labelframe_out.pack(pady=15)
 
-        self.label_site_out = tk.Label(self.labelframe_out, text="Target domain(s): None",
+        self.label_site_out = tk.Label(self.labelframe_out,
+                                       text="Target domain(s): None",
                                        font=(self.controller.font, self.controller.font_size),
                                        width=text_box_width,
                                        anchor=tk.W,
@@ -90,7 +99,8 @@ class AttackDNSFrame(tk.Frame):
         self.label_site_out.config(bg='#DADADA', fg='black')
         self.label_site_out.pack(side='top', padx=10, pady=15)
 
-        self.victims_out = tk.Label(self.labelframe_out, text="Victim(s): None",
+        self.victims_out = tk.Label(self.labelframe_out,
+                                    text="Victim(s): None",
                                     font=(self.controller.font, self.controller.font_size),
                                     width=text_box_width,
                                     anchor=tk.W,
@@ -98,7 +108,8 @@ class AttackDNSFrame(tk.Frame):
         self.victims_out.config(bg='#DADADA', fg='black')
         self.victims_out.pack(side='top', padx=10, pady=15)
 
-        self.target_out = tk.Label(self.labelframe_out, text="Target: None",
+        self.target_out = tk.Label(self.labelframe_out,
+                                   text="Target: None",
                                    font=(self.controller.font, self.controller.font_size),
                                    width=text_box_width,
                                    anchor=tk.W,
@@ -123,7 +134,7 @@ class AttackDNSFrame(tk.Frame):
         print(victims)
 
         if not are_valid_address([target]):
-            messagebox.showerror("Error",  "The target IP address is not a valid IPv4 or IPv6 IP address.")
+            messagebox.showerror("Error", "The target IP address is not a valid IPv4 or IPv6 IP address.")
             return
 
         if not are_valid_address(victims):

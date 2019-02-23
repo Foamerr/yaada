@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import messagebox
 import webbrowser
+from tkinter import messagebox
 
 
 class HelpFrame(tk.Frame):
@@ -10,37 +10,32 @@ class HelpFrame(tk.Frame):
         Initialises GUI of the frame used for the help tab
         """
         tk.Frame.__init__(self, parent)
-        self.controller = controller
-        self.configure(bg='#DADADA')
+        self.controller = controller, self.configure(bg='#DADADA')
 
         self.label_welcome = tk.Label(self,
                                       text='One can get information and help regarding the application here.',
                                       font=(self.controller.font, self.controller.font_size))
-        self.label_welcome.config(bg='#DADADA', fg='black')
-        self.label_welcome.pack(side='top', pady=10)
+        self.label_welcome.config(bg='#DADADA', fg='black'), self.label_welcome.pack(side='top', pady=10)
 
         self.button_about = tk.Button(self,
                                       text='About',
                                       command=self.dis_about,
                                       width=15,
                                       font=(self.controller.font, self.controller.font_size))
-        self.button_about.config(bg='#DADADA', fg='black')
-        self.button_about.pack(side='top', pady=5)
+        self.button_about.config(bg='#DADADA', fg='black'), self.button_about.pack(side='top', pady=5)
 
         self.button_doc = tk.Button(self,
                                     text='Documentation',
                                     command=self.dis_doc,
                                     width=15,
                                     font=(self.controller.font, self.controller.font_size))
-        self.button_doc.config(bg='#DADADA', fg='black')
-        self.button_doc.pack(side='top', pady=5)
+        self.button_doc.config(bg='#DADADA', fg='black'), self.button_doc.pack(side='top', pady=5)
 
         self.button_doc = tk.Button(self,
                                     text='Exit',
                                     command=self.quit,
                                     width=15, font=(self.controller.font, self.controller.font_size))
-        self.button_doc.config(bg='#DADADA', fg='black')
-        self.button_doc.pack(side='top', pady=5)
+        self.button_doc.config(bg='#DADADA', fg='black'), self.button_doc.pack(side='top', pady=5)
 
     @staticmethod
     def dis_about():
@@ -55,5 +50,8 @@ class HelpFrame(tk.Frame):
 
     @staticmethod
     def dis_doc():
+        """
+        Opens documentation PDF file in default browser
+        """
         file = r'..\resources\documentation.pdf'
         webbrowser.open_new(file)

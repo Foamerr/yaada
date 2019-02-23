@@ -1,11 +1,12 @@
 import tkinter as tk
 from collections import OrderedDict
 from tkinter import ttk
+
 from frames.attack_arp_frame import AttackARPFrame
-from frames.initial_frame import InitialFrame
 from frames.attack_dns_frame import AttackDNSFrame
-from frames.logging_frame import LoggingFrame
 from frames.help_frame import HelpFrame
+from frames.initial_frame import InitialFrame
+from frames.logging_frame import LoggingFrame
 
 
 class MainApplication(tk.Frame):
@@ -32,6 +33,9 @@ class MainApplication(tk.Frame):
         self.create_tabs()
 
     def set_style(self):
+        """
+        Sets the style and the dimension of the application
+        """
         style = ttk.Style()
         style.element_create('Plain.Notebook.tab', 'from', 'default')
 
@@ -39,15 +43,16 @@ class MainApplication(tk.Frame):
 
         custom_style = ttk.Style()
         custom_style.configure('Custom.TNotebook.Tab', padding=[10, 8], font=(self.font, self.font_size))
+
         # Could use these, but then you have to redo the whole `classic' theme as well :/
         custom_style.configure('Custom.TButton', bg='#DADADA', fg='black', font=(self.font, self.font_size))
         custom_style.configure('Custom.TLabel', bg='#DADADA', fg='black', font=(self.font, self.font_size))
 
-    def set_size(self, parent):
+    @staticmethod
+    def set_size(parent):
         """
         Sets the width, height, and start positions of the applications
         """
-
         x_start = 400
         y_start = 250
         width = 525
@@ -72,6 +77,7 @@ class MainApplication(tk.Frame):
         self.notebook.grid(row=0, column=0, columnspan=100, rowspan=21, sticky='NSWE')
         self.log.grid(row=21, column=0, columnspan=100, rowspan=100, sticky='NSWE')
 
+        # Defining the notebook tabs
         self.tabs = {}
         self.tab_map = OrderedDict([
             (InitialFrame, 'Home'),

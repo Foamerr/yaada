@@ -17,7 +17,6 @@ class LoggingFrame(tk.Frame):
         self.out_msg = None
         self.out_list = None
         self.font_size = 11
-
         self.create_stat_bar()
         self.create_out_box()
 
@@ -76,4 +75,7 @@ class LoggingFrame(tk.Frame):
 
     @staticmethod
     def get_prefix_out():
+        """
+        Returns the prefix for the output
+        """
         return ' [' + str(datetime.now().time().strftime("%H:%M:%S")) + " «] "
