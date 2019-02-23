@@ -10,7 +10,6 @@ class InitialFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
-        width = int(self.winfo_screenwidth() * 0.25)
 
         top_frame = tk.Frame(self)
         top_frame.configure(bg='#DADADA')
@@ -36,7 +35,10 @@ class InitialFrame(tk.Frame):
                                                "target. \n\nThe `DNS Spoofing' tab provides a way to execute a DNS spoofing "
                                                "attack on a victim with a corresponding target. \n\nThe `Help' tab "
                                                "provides additional ways to get help and other documentation of the "
-                                               "tool.", wraplength=width-50, justify=tk.LEFT,
+                                               "tool.",
+                                         wraplength=450,
+                                         justify=tk.LEFT,
+                                         width=53,
                                          font=(self.controller.font, self.controller.font_size))
         self.label_gen_widget.config(bg='#DADADA', fg='black')
         self.labelframe_gen_widget.pack(padx=5, pady=5)

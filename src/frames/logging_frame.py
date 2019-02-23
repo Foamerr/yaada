@@ -31,7 +31,10 @@ class LoggingFrame(tk.Frame):
 
         scroll = tk.Scrollbar(self.out_msg)
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
-        self.out_list = tk.Listbox(self.out_msg, bg='black', fg='white', yscrollcommand=scroll.set,
+        self.out_list = tk.Listbox(self.out_msg,
+                                   bg='black',
+                                   fg='white',
+                                   yscrollcommand=scroll.set,
                                    font=(self.controller.font, self.controller.font_size))
         scroll.config(command=self.out_list.yview)
         self.out_list.pack(fill=tk.BOTH, side=tk.TOP, anchor=tk.W, expand=tk.TRUE)
@@ -42,7 +45,9 @@ class LoggingFrame(tk.Frame):
         Creates a status bar
         """
         self.stat_text = self.empty_stat
-        self.stat_msg = tk.Message(self, text=self.stat.__add__(self.stat_text), width=600, anchor=tk.W,
+        self.stat_msg = tk.Message(self,
+                                   text=self.stat.__add__(self.stat_text),
+                                   width=600, anchor=tk.W,
                                    font=(self.controller.font, self.controller.font_size))
         self.stat_msg.pack(anchor=tk.W, fill=tk.X, side=tk.BOTTOM)
         self.stat_msg.config(bg='#DADADA', fg='black')

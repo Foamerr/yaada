@@ -37,20 +37,21 @@ class MainApplication(tk.Frame):
 
         style.theme_use('classic')
 
-        customed_style = ttk.Style()
-        customed_style.configure('Custom.TNotebook.Tab', padding=[10, 8], font=(self.font, self.font_size))
+        custom_style = ttk.Style()
+        custom_style.configure('Custom.TNotebook.Tab', padding=[10, 8], font=(self.font, self.font_size))
         # Could use these, but then you have to redo the whole `classic' theme as well :/
-        customed_style.configure('Custom.TButton', bg='#DADADA', fg='black', font=(self.font, self.font_size))
-        customed_style.configure('Custom.TLabel', bg='#DADADA', fg='black', font=(self.font, self.font_size))
+        custom_style.configure('Custom.TButton', bg='#DADADA', fg='black', font=(self.font, self.font_size))
+        custom_style.configure('Custom.TLabel', bg='#DADADA', fg='black', font=(self.font, self.font_size))
 
     def set_size(self, parent):
         """
         Sets the width, height, and start positions of the applications
         """
-        x_start = int(self.winfo_screenwidth() * 0.2)
-        y_start = int(self.winfo_screenheight() * 0.2)
-        width = int(self.winfo_screenwidth() * 0.25)
-        height = int(self.winfo_screenheight() * 0.6)
+
+        x_start = 400
+        y_start = 250
+        width = 525
+        height = 750
 
         parent.geometry('%dx%d+%d+%d' % (width, height, x_start, y_start))
         parent.resizable(0, 0)
@@ -68,13 +69,13 @@ class MainApplication(tk.Frame):
         self.notebook = ttk.Notebook(self, style='Custom.TNotebook')
         self.log = LoggingFrame(parent=self, controller=self)
 
-        self.notebook.grid(row=0, column=0, columnspan=100, rowspan=31, sticky='NSWE')
-        self.log.grid(row=31, column=0, columnspan=100, rowspan=100, sticky='NSWE')
+        self.notebook.grid(row=0, column=0, columnspan=100, rowspan=21, sticky='NSWE')
+        self.log.grid(row=21, column=0, columnspan=100, rowspan=100, sticky='NSWE')
 
         self.tabs = {}
         self.tab_map = OrderedDict([
             (InitialFrame, 'Home'),
-            (AttackARPFrame, 'ARP Spoofing'),
+            (AttackARPFrame, 'ARP Poisoning'),
             (AttackDNSFrame, 'DNS Spoofing'),
             (HelpFrame, 'Help')
         ])
