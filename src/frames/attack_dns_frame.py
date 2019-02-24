@@ -81,10 +81,9 @@ class AttackDNSFrame(tk.Frame):
         self.button_stop.config(bg='#DADADA', fg='black')
         self.button_stop.place(relx=0.70, rely=0.5, anchor=tk.CENTER)
 
-        self.button_stop.config(state=tk.DISABLED)
+        self.button_stop.configure(state=tk.DISABLED)
 
         # OUTPUT #
-        # TODO: add wraplength for wrapping long text
         self.labelframe_out = tk.LabelFrame(bottom_frame,
                                             text="Settings",
                                             font=(self.controller.font, self.controller.font_size, "bold"))
@@ -95,6 +94,7 @@ class AttackDNSFrame(tk.Frame):
                                        text="Target domain(s): None",
                                        font=(self.controller.font, self.controller.font_size),
                                        width=text_box_width,
+                                       wraplength=450,
                                        anchor=tk.W,
                                        justify=tk.LEFT)
         self.label_site_out.config(bg='#DADADA', fg='black')
@@ -104,6 +104,7 @@ class AttackDNSFrame(tk.Frame):
                                     text="Victim(s): None",
                                     font=(self.controller.font, self.controller.font_size),
                                     width=text_box_width,
+                                    wraplength=450,
                                     anchor=tk.W,
                                     justify=tk.LEFT)
         self.victims_out.config(bg='#DADADA', fg='black')
@@ -113,6 +114,7 @@ class AttackDNSFrame(tk.Frame):
                                    text="Target: None",
                                    font=(self.controller.font, self.controller.font_size),
                                    width=text_box_width,
+                                   wraplength=450,
                                    anchor=tk.W,
                                    justify=tk.LEFT)
         self.target_out.config(bg='#DADADA', fg='black')
@@ -133,6 +135,7 @@ class AttackDNSFrame(tk.Frame):
 
         print(domains)
         print(victims)
+        print(target)
 
         if not are_valid_address([target]):
             messagebox.showerror("Error", "The target IP address is not a valid IPv4 or IPv6 IP address.")
@@ -142,19 +145,27 @@ class AttackDNSFrame(tk.Frame):
             messagebox.showerror("Error", "The victim IP address is not a valid IPv4 or IPv6 IP address.")
             return
 
-        self.controller.log.update_out('Domain, target, and victim successfully set')
+        # TODO: Cover all cases
+        if domains == "":
+            messagebox.showerror("Error", "Please enter a valid domain.")
+            return
 
-        # TODO: implement in dns_attack.py (?)
-        self.controller.log.update_out('Starting DNS spoofing')
+        if target in victims or target in domains:
+            messagebox.showerror("Error", "You cannot not set the target as a victim or as a domain.")
+        else:
+            self.controller.log.update_out('Domain, target, and victim successfully set')
 
-        self.controller.log.update_stat("DNS spoofing provided victim's domain with target IP")
-        self.controller.log.update_out('DNS spoofing active')
+            # TODO: implement in dns_attack.py (?)
+            self.controller.log.update_out('Starting DNS spoofing')
 
-        self.button_start.config(state=tk.DISABLED)
-        self.button_stop.config(state=tk.ENABLED)
-        self.label_site_out.configure(text="Target domain(s): " + self.domain.get())
-        self.victims_out.configure(text="Victim(s): " + self.victims.get())
-        self.target_out.configure(text="Target: " + self.target.get())
+            self.controller.log.update_stat('DNS spoofing is active')
+            self.controller.log.update_out('DNS spoofing is active')
+
+            self.button_start.configure(state=tk.DISABLED)
+            self.button_stop.configure(state=tk.NORMAL)
+            self.label_site_out.configure(text="Target domain(s): " + self.domain.get())
+            self.victims_out.configure(text="Victim(s): " + self.victims.get())
+            self.target_out.configure(text="Target: " + self.target.get())
 
     def stop_dns(self):
         # TODO: implement in dns_attack.py (?)
@@ -166,6 +177,6 @@ class AttackDNSFrame(tk.Frame):
 
         self.controller.log.update_out('DNS spoofing stopped')
         self.controller.log.update_stat("Stopped DNS spoofing")
-        self.button_start.config(state=tk.ENABLED)
-        self.button_stop.config(state=tk.DISABLED)
+        self.button_start.configure(state=tk.NORMAL)
+        self.button_stop.configure(state=tk.DISABLED)
         return

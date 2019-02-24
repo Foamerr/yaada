@@ -17,6 +17,7 @@ class AttackARPFrame(tk.Frame):
         self.font = "Georgia"
         self.font_size = 11
 
+        # FRAMES SETUP #
         top_frame = tk.Frame(self)
         self.labelframe_in = tk.LabelFrame(top_frame,
                                            text="Input",
@@ -35,6 +36,7 @@ class AttackARPFrame(tk.Frame):
         bottom_frame.pack(side="top", fill="both", expand=True)
         button_start_frame.pack(side="bottom", fill="both", expand=True)
 
+        # INPUT #
         self.label_ip = tk.Label(self.labelframe_in,
                                  text="Gateway to use (already provided is default)",
                                  font=(self.controller.font, self.controller.font_size))
@@ -79,6 +81,7 @@ class AttackARPFrame(tk.Frame):
         self.button_target.config(bg='#DADADA', fg='black')
         self.button_target.place(relx=0.30, rely=0.5, anchor=tk.CENTER)
 
+        # SETTINGS #
         self.labelframe_out = tk.LabelFrame(bottom_frame,
                                             text="Settings",
                                             font=(self.controller.font, self.controller.font_size, "bold"))
@@ -89,6 +92,7 @@ class AttackARPFrame(tk.Frame):
                                      text="Victim(s): None",
                                      font=(self.controller.font, self.controller.font_size),
                                      width=53,
+                                     wraplength=450,
                                      anchor=tk.W,
                                      justify=tk.LEFT)
         self.label_victim.config(bg='#DADADA', fg='black')
@@ -98,6 +102,7 @@ class AttackARPFrame(tk.Frame):
                                      text="Target: None",
                                      font=(self.controller.font, self.controller.font_size),
                                      width=53,
+                                     wraplength=450,
                                      anchor=tk.W,
                                      justify=tk.LEFT)
         self.label_target.config(bg='#DADADA', fg='black')

@@ -33,6 +33,7 @@ class LoggingFrame(tk.Frame):
         self.out_list = tk.Listbox(self.out_msg,
                                    bg='black',
                                    fg='white',
+                                   activestyle='none',
                                    yscrollcommand=scroll.set,
                                    font=(self.controller.font, self.controller.font_size))
         scroll.config(command=self.out_list.yview)
