@@ -19,11 +19,14 @@ class InitialFrame(tk.Frame):
         # GUI COMPONENTS #
         about_desc = "Hackerman is a tool that provides an easy way to easily execute ARP " \
                      "poisoning and DNS spoofing attacks on a selected list of victims " \
-                     "and a target. \n\nThe `Home' tab provides a general description of the tool and explains " \
+                     "with a target. The victims represent the victims of the attack." \
+                     " Under normal conditions, the target represents the attacker. " \
+                     "See the documentation on the `Help' tab for a more detailed description of the tool." \
+                     "\n\nThe `Home' tab provides a general description of the tool and explains " \
                      "the various tabs. \n\nThe `ARP Poisoning' tab provides a way to " \
-                     "execute an ARP poisoning attack on a victim with a corresponding " \
+                     "execute an ARP poisoning attack on a list of victims and a specified " \
                      "target. \n\nThe `DNS Spoofing' tab provides a way to execute a DNS spoofing " \
-                     "attack on a victim with a corresponding target. \n\nThe `Help' tab " \
+                     "attack on a list victims for certain domains with a corresponding target. \n\nThe `Help' tab " \
                      "provides additional ways to get help and other documentation of the " \
                      "tool."
 
