@@ -16,6 +16,7 @@ class AttackARPFrame(tk.Frame):
         self.target = None
         self.font = "Georgia"
         self.font_size = 11
+        self.log = self.controller.log
 
         # FRAMES SETUP #
         top_frame = tk.Frame(self)
@@ -131,8 +132,8 @@ class AttackARPFrame(tk.Frame):
         address = self.textbox_ip.get()
 
         self.ip_box.delete(0, tk.END)
-        self.controller.log.update_stat('Searching for local network addresses')
-        self.controller.log.update_out('searching for local network addresses')
+        self.log.update_stat('Searching for local network addresses')
+        self.log.update_out('searching for local network addresses')
 
         options = dis.arp_ping(netmask=address)
         if not len(options) == 0:
@@ -141,17 +142,17 @@ class AttackARPFrame(tk.Frame):
                 self.ip_box.insert(tk.END, option)
         else:
             self.ip_box.insert(tk.END, "could not find any IP addresses")
-            self.controller.log.update_out('could not find any IP addresses')
+            self.log.update_out('could not find any IP addresses')
 
-        self.controller.log.update_stat('Finished searching for local network addresses')
-        self.controller.log.update_out('finished searching for local network addresses')
+        self.log.update_stat('Finished searching for local network addresses')
+        self.log.update_out('finished searching for local network addresses')
 
     def set_target(self):
         try:
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
             target = str(target).split('at ', 1)[1]
-            self.controller.log.update_out(target + ' has been set as the target IP address')
+            self.log.update_out(target + ' has been set as the target IP address')
             self.label_target.config(text=('Target: ' + target))
             self.enable_start()
             self.target = target
@@ -169,13 +170,13 @@ class AttackARPFrame(tk.Frame):
                     entry = str(entry).split('at ', 1)[1]
                     result.append(entry)
                 strings = ', '.join(result)
-                self.controller.log.update_out(strings + ' have been set as the victims')
+                self.log.update_out(strings + ' have been set as the victims')
                 self.label_victim.config(text='Victims: ' + strings)
                 self.enable_start()
                 self.victims = strings
             else:
                 entry = str(self.ip_box.get(selection)).split('at ', 1)[1]
-                self.controller.log.update_out(entry + ' has been set as the victims')
+                self.log.update_out(entry + ' has been set as the victims')
                 self.label_victim.config(text='Victim: ' + entry)
                 self.enable_start()
                 self.victims = [entry]
@@ -190,8 +191,8 @@ class AttackARPFrame(tk.Frame):
 
         if (victim_text != 'Victim(s): None') and (target_text != 'Target: None'):
             self.button_start.config(state=tk.NORMAL)
-            self.controller.log.update_out('both victim and target set have been set')
-            self.controller.log.update_out('ready for action')
+            self.log.update_out('both victim and target set have been set')
+            self.log.update_out('ready for action')
 
     def start_arp(self):
         # TODO: implement in arp_attack.py (?)
@@ -206,8 +207,8 @@ class AttackARPFrame(tk.Frame):
             print(self.target)
             print(self.victims)
 
-            self.controller.log.update_out('starting ARP poisoning')
-            self.controller.log.update_stat('ARP poisoning is active')
+            self.log.update_out('starting ARP poisoning')
+            self.log.update_stat('ARP poisoning is active')
             return
 
     def stop_arp(self):
@@ -218,8 +219,8 @@ class AttackARPFrame(tk.Frame):
         self.target = None
         self.victims = []
 
-        self.controller.log.update_out('stopping ARP poisoning')
-        self.controller.log.update_stat('ARP poisoning is inactive')
+        self.log.update_out('stopping ARP poisoning')
+        self.log.update_stat('ARP poisoning is inactive')
         return
 
     @staticmethod
