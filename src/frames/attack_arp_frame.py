@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from attacks.arp_attack import *
 
 import discovery as dis
 
@@ -13,9 +14,12 @@ class AttackARPFrame(tk.Frame):
         self.controller = controller
         self.configure(bg='#DADADA')
         self.victims = []
+        self.victims_mac = []
         self.target = None
+        self.target_mac = None
         self.font = "Georgia"
         self.font_size = 11
+        self.arp = None
         self.log = self.controller.log
 
         # FRAMES SETUP #
@@ -141,7 +145,7 @@ class AttackARPFrame(tk.Frame):
                 # TODO: Add "(self)" behind own MAC-ip address combo so that the user knows their own address
                 self.ip_box.insert(tk.END, option)
         else:
-            self.ip_box.insert(tk.END, "could not find any IP addresses")
+            self.ip_box.insert(tk.END, 'could not find any IP addresses')
             self.log.update_out('could not find any IP addresses')
 
         self.log.update_stat('Finished searching for local network addresses')
@@ -151,11 +155,11 @@ class AttackARPFrame(tk.Frame):
         try:
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
-            target = str(target).split('at ', 1)[1]
-            self.log.update_out(target + ' has been set as the target IP address')
-            self.label_target.config(text=('Target: ' + target))
+            self.target = str(target).split('at ', 1)[1]
+            self.target_mac = str(target).split(' ', 1)[0]
+            self.log.update_out(self.target + ' has been set as the target IP address')
+            self.label_target.config(text=('Target: ' + self.target))
             self.enable_start()
-            self.target = target
         except tk.TclError:
             self.dis_err('exactly one target')
 
@@ -164,16 +168,20 @@ class AttackARPFrame(tk.Frame):
 
         if len(selection) != 0:
             result = []
+            result_mac = []
             if len(selection) > 1:
                 for i in selection:
                     entry = self.ip_box.get(i)
-                    entry = str(entry).split('at ', 1)[1]
-                    result.append(entry)
+                    ip = str(entry).split('at ', 1)[1]
+                    mac = str(entry).split(' ', 1)[0]
+                    result_mac.append(mac)
+                    result.append(ip)
                 strings = ', '.join(result)
                 self.log.update_out(strings + ' have been set as the victims')
                 self.label_victim.config(text='Victims: ' + strings)
                 self.enable_start()
-                self.victims = strings
+                self.victims = result
+                self.victims_mac = result_mac
             else:
                 entry = str(self.ip_box.get(selection)).split('at ', 1)[1]
                 self.log.update_out(entry + ' has been set as the victims')
@@ -205,7 +213,11 @@ class AttackARPFrame(tk.Frame):
 
             # Convert these to method parameters rather than global vars
             print(self.target)
+            print(self.target_mac)
             print(self.victims)
+            print(self.victims_mac)
+
+            self.arp = ArpPoisonVial(self.victims, self.target, self.victims_mac, self.target_mac)
 
             self.log.update_out('starting ARP poisoning')
             self.log.update_stat('ARP poisoning is active')

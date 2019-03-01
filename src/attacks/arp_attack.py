@@ -3,6 +3,9 @@ import os
 import threading
 import time
 
+from scapy.layers.l2 import ARP, Ether
+
+
 class ArpPoisonVial(threading.Thread):
     stop = False
 
@@ -25,19 +28,21 @@ class ArpPoisonVial(threading.Thread):
         # Disable IP forwarding
         os.system("sysctl -w net.ipv4.ip_forward=0")
 
-    def get_mac(self, ip):
-        resp, unans =  srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(op=1, pdst=ip))
-        for s,r in resp:
+    @staticmethod
+    def get_mac(ip):
+        resp, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(op=1, pdst=ip))
+        for s, r in resp:
             return r[ARP].hwsrc
         return None
 
-    def stop_poison(self):
+    @staticmethod
+    def stop_poison():
         global stop
         stop = True
 
     def start(self):
         # requires elevated privileges
-        #os.system("sysctl -w net.ipv4.ip_forward=1")
+        # os.system("sysctl -w net.ipv4.ip_forward=1")
         global stop
         stop = False
         while not self.stop:
@@ -46,4 +51,4 @@ class ArpPoisonVial(threading.Thread):
             time.sleep(2)
             print('do me an poison')
             print(f"stop flag value: {self.stop}")
-        #self.restore_network()
+        # self.restore_network()
