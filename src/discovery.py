@@ -1,7 +1,9 @@
+from __future__ import absolute_import, division, print_function
 import netifaces
 
 from scapy.all import srp, conf
 from scapy.layers.l2 import Ether, ARP
+import socket
 
 
 def arp_ping(netmask="192.168.1.0/24"):
@@ -34,3 +36,20 @@ def get_local_host_ip():
                 return j['addr']
         else:
             return None
+
+
+def arp_ping_details(netmask="192.168.2.254/24"):
+    conf.verb = 0
+    ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=netmask), timeout=0.2)
+    hosts = []
+    print(ans)
+    for s, r in ans.res:
+        try:
+            hostname = socket.gethostbyaddr(r.psrc)
+            hosts.append(hostname[0])
+        except socket.herror:
+            # failed to resolve
+            pass
+        print(hosts)
+    ans.append(hosts)
+    return [(rcv.sprintf(r"%Ether.src% at %ARP.psrc%") for snd, rcv in ans)]
