@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from attacks.arp_attack import *
-
+import netifaces
 import discovery as dis
 
 
@@ -140,10 +140,20 @@ class AttackARPFrame(tk.Frame):
         self.log.update_out('searching for local network addresses')
 
         options = dis.arp_ping(netmask=address)
+        local = dis.get_local_host_ip()
+
         if not len(options) == 0:
             for option in options:
                 # TODO: Add "(self)" behind own MAC-ip address combo so that the user knows their own address
-                self.ip_box.insert(tk.END, option)
+
+                ipv4 = option.split('at ', 1)[1]
+                if dis.get_default_gateway() == ipv4:
+                    self.ip_box.insert(tk.END, option + ' (gateway)')
+                else:
+                    if ipv4 == local:
+                        self.ip_box.insert(tk.END, option + ' (self)')
+                    else:
+                        self.ip_box.insert(tk.END, option)
         else:
             self.ip_box.insert(tk.END, 'could not find any IP addresses')
             self.log.update_out('could not find any IP addresses')
