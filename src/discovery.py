@@ -53,3 +53,16 @@ def arp_ping_details(netmask="192.168.2.254/24"):
         print(hosts)
     ans.append(hosts)
     return [(rcv.sprintf(r"%Ether.src% at %ARP.psrc%") for snd, rcv in ans)]
+
+
+def mac_for_ip(ip):
+    for i in netifaces.interfaces():
+        addrs = netifaces.ifaddresses(i)
+        try:
+            if_mac = addrs[netifaces.AF_LINK][0]['addr']
+            if_ip = addrs[netifaces.AF_INET][0]['addr']
+        except IndexError:  # ignore ifaces that dont have MAC or IP
+            if_mac = if_ip = None
+        if if_ip == ip:
+            return if_mac
+    return None
