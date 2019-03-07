@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 import discovery as dis
+from .arp_attack import ArpPoison
 
 
 class AttackARPFrame(tk.Frame):
@@ -26,11 +27,14 @@ class AttackARPFrame(tk.Frame):
         self.labelframe_in.config(bg='#DADADA', fg='black')
         self.labelframe_in.pack(pady=15)
 
-        button_set_frame, bottom_frame = tk.Frame(self.labelframe_in, height=55), tk.Frame(self)
+        button_set_frame, bottom_frame = tk.Frame(
+            self.labelframe_in, height=55), tk.Frame(self)
         button_start_frame = tk.Frame(bottom_frame)
 
-        button_set_frame.configure(bg='#DADADA'), top_frame.configure(bg='#DADADA')
-        button_start_frame.configure(bg='#DADADA'), bottom_frame.configure(bg='#DADADA')
+        button_set_frame.configure(
+            bg='#DADADA'), top_frame.configure(bg='#DADADA')
+        button_start_frame.configure(
+            bg='#DADADA'), bottom_frame.configure(bg='#DADADA')
 
         top_frame.pack(side="top", fill="x")
         button_set_frame.pack(side="bottom", fill="both", expand=True)
@@ -62,7 +66,8 @@ class AttackARPFrame(tk.Frame):
                                  width=53,
                                  height=7,
                                  selectmode=tk.MULTIPLE,
-                                 font=(self.controller.font, self.controller.font_size),
+                                 font=(self.controller.font,
+                                       self.controller.font_size),
                                  activestyle='none')
         self.ip_box.pack(side='top', padx=10, pady=5)
 
@@ -91,7 +96,8 @@ class AttackARPFrame(tk.Frame):
 
         self.label_victim = tk.Label(self.labelframe_out,
                                      text="Victim(s): None",
-                                     font=(self.controller.font, self.controller.font_size),
+                                     font=(self.controller.font,
+                                           self.controller.font_size),
                                      width=53,
                                      wraplength=450,
                                      anchor=tk.W,
@@ -101,7 +107,8 @@ class AttackARPFrame(tk.Frame):
 
         self.label_target = tk.Label(self.labelframe_out,
                                      text="Target: None",
-                                     font=(self.controller.font, self.controller.font_size),
+                                     font=(self.controller.font,
+                                           self.controller.font_size),
                                      width=53,
                                      wraplength=450,
                                      anchor=tk.W,
@@ -152,7 +159,8 @@ class AttackARPFrame(tk.Frame):
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
             target = str(target).split('at ', 1)[1]
-            self.log.update_out(target + ' has been set as the target IP address')
+            self.log.update_out(
+                target + ' has been set as the target IP address')
             self.label_target.config(text=('Target: ' + target))
             self.enable_start()
             self.target = target
@@ -198,7 +206,8 @@ class AttackARPFrame(tk.Frame):
         # TODO: implement in arp_attack.py (?)
 
         if self.target in self.victims:
-            messagebox.showerror("Error", "You cannot not set the target as a victim.")
+            messagebox.showerror(
+                "Error", "You cannot not set the target as a victim.")
         else:
             self.button_stop.config(state=tk.NORMAL)
             self.button_start.config(state=tk.DISABLED)
@@ -206,6 +215,8 @@ class AttackARPFrame(tk.Frame):
             # Convert these to method parameters rather than global vars
             print(self.target)
             print(self.victims)
+            self.arp = ArpPoison(target=self.target, victims=self.victims)
+            self.arp.start_poisoning()
 
             self.log.update_out('starting ARP poisoning')
             self.log.update_stat('ARP poisoning is active')
@@ -218,6 +229,7 @@ class AttackARPFrame(tk.Frame):
 
         self.target = None
         self.victims = []
+        self.arp.stop_poisoning()
 
         self.log.update_out('stopping ARP poisoning')
         self.log.update_stat('ARP poisoning is inactive')
@@ -228,4 +240,5 @@ class AttackARPFrame(tk.Frame):
         """
         Displays a message box containing error
         """
-        messagebox.showerror("Error", "Please make sure to first select " + case + " IP before pressing this button.")
+        messagebox.showerror("Error", "Please make sure to first select " +
+                             case + " IP before pressing this button.")
