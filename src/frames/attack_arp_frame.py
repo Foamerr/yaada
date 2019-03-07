@@ -220,6 +220,15 @@ class AttackARPFrame(tk.Frame):
             self.button_start.config(state=tk.DISABLED)
 
             # Convert these to method parameters rather than global vars
+            self.target = str(self.target).split(' ', 1)[0]
+
+            victims = []
+            for victim in self.victims:
+                victim = str(victim).split(' ', 1)[0]
+                victims.append(victim)
+            self.victims = victims
+
+            # TODO: Change to dictionary with MAC or IP as key, etc
             print(self.target)
             print(self.target_mac)
             print(self.victims)
