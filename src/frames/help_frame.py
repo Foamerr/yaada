@@ -41,7 +41,7 @@ class HelpFrame(tk.Frame):
     @staticmethod
     def dis_about():
         """ Displays a message box containing the `about' section information """
-        messagebox.showinfo("About", "Hackerman is a tool for ARP and DNS spoofing \n"
+        messagebox.showinfo("About", "YAADA is a tool for ARP and DNS spoofing \n"
                                      "with different modalities that automatically \n"
                                      "poisons ARP caches and uses DNS queries to \n"
                                      "poison recursive DNS cache. \n"

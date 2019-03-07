@@ -15,7 +15,7 @@ class InitialFrame(tk.Frame):
         top_frame.pack(side="top", fill="x"), bottom_frame.pack(side="top", fill="both", expand=True)
 
         # GUI COMPONENTS #
-        about_desc = "Hackerman is a tool that provides an easy way to easily execute ARP " \
+        about_desc = "YAADA is a tool that provides an easy way to easily execute ARP " \
                      "poisoning and DNS spoofing attacks on a selected list of victims " \
                      "with a target. The victims represent the victims of the attack." \
                      " Under normal conditions, the target represents the attacker. " \
@@ -29,7 +29,7 @@ class InitialFrame(tk.Frame):
                      "tool."
 
         self.label_welcome = tk.Label(top_frame,
-                                      text='Hackerman',
+                                      text='YAADA',
                                       font=(self.controller.font, 44))
         self.label_welcome.config(bg='#DADADA', fg='black')
         self.label_welcome.pack(side='top', pady=10)
