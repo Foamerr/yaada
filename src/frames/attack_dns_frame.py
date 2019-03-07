@@ -7,9 +7,7 @@ from validation import *
 class AttackDNSFrame(tk.Frame):
 
     def __init__(self, parent, controller):
-        """
-        Initialises GUI of the frame used for the DNS spoofing
-        """
+        """ Initialises GUI of the frame used for the DNS spoofing """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
@@ -122,10 +120,12 @@ class AttackDNSFrame(tk.Frame):
 
     @staticmethod
     def get_targets(unfiltered_list):
+        """ Gets the targets """
         unfiltered_list = unfiltered_list.split(', ')
         return unfiltered_list
 
     def start_dns(self):
+        """ Starts the DNS spoofing attack on victims, domains, and a target """
         domains = self.domain.get()
         target = self.target.get()
         victims = self.victims.get()
@@ -168,7 +168,7 @@ class AttackDNSFrame(tk.Frame):
             self.target_out.configure(text="Target: " + self.target.get())
 
     def stop_dns(self):
-        # TODO: implement in dns_attack.py (?)
+        """ Stops the DNS spoofing attack """
         self.label_site_out.configure(text="Target domain(s): None")
         self.victims_out.configure(text="Victim(s): None")
         self.target_out.configure(text="Target: None")

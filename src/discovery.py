@@ -1,30 +1,27 @@
 from __future__ import absolute_import, division, print_function
+
 import netifaces
+import socket
 
 from scapy.all import srp, conf
 from scapy.layers.l2 import Ether, ARP
-import socket
 
 
 def arp_ping(netmask="192.168.1.0/24"):
-    """
-    Returns the IP and MAC-address of all local hosts under with respect to @netmask
-    """
-    # TODO: Doesn't find actual local host IP even with a long timeout?
+    """ Returns the IP and MAC-address of all local hosts with respect to @netmask """
     conf.verb = 0
     ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=netmask), timeout=0.2)
     return [rcv.sprintf(r"%Ether.src% at %ARP.psrc%") for snd, rcv in ans]
 
 
 def get_default_gateway():
-    """
-    Returns the default gateway of a host
-    """
+    """ Returns the default gateway of a host """
     gws = netifaces.gateways()
     return str(gws['default'][netifaces.AF_INET][0])
 
 
 def get_local_host_ip():
+    """ Returns local IP address """
     interfaces = netifaces.interfaces()
 
     for i in interfaces:
@@ -39,6 +36,7 @@ def get_local_host_ip():
 
 
 def arp_ping_details(netmask="192.168.2.254/24"):
+    """ Returns the IP and MAC-address of all local hosts together with the hostname if possible """
     conf.verb = 0
     ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=netmask), timeout=0.2)
     hosts = []
@@ -56,6 +54,7 @@ def arp_ping_details(netmask="192.168.2.254/24"):
 
 
 def mac_for_ip(ip):
+    """ Returns the MAC address that belongs to @ip """
     for i in netifaces.interfaces():
         addrs = netifaces.ifaddresses(i)
         try:

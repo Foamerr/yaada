@@ -1,15 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
-from attacks.arp_attack import *
-import netifaces as nif
+
 import discovery as dis
+from attacks.arp_attack import *
 
 
 class AttackARPFrame(tk.Frame):
+
     def __init__(self, parent, controller):
-        """
-        Initialises GUI of the frame used for selecting the target
-        """
+        """ Initialises GUI of the frame used for selecting the target """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
@@ -133,6 +132,7 @@ class AttackARPFrame(tk.Frame):
         self.button_stop.config(state=tk.DISABLED)
 
     def update_local(self):
+        """ Scan the network and store all found IP/MAC combinations in a listbox """
         address = self.textbox_ip.get()
 
         self.ip_box.delete(0, tk.END)
@@ -160,6 +160,7 @@ class AttackARPFrame(tk.Frame):
         self.log.update_out('finished searching for local network addresses')
 
     def set_target(self):
+        """ Sets the target (MAC/IP combination) """
         try:
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
@@ -172,6 +173,7 @@ class AttackARPFrame(tk.Frame):
             self.dis_err('exactly one target')
 
     def set_victim(self):
+        """ Sets the victim(s) (MAC/IP combination(s)) """
         selection = self.ip_box.curselection()
 
         if len(selection) != 0:
@@ -202,6 +204,7 @@ class AttackARPFrame(tk.Frame):
             self.dis_err('at least one victim')
 
     def enable_start(self):
+        """ Checks if the start button should be enabled """
         victim_text = self.label_victim.cget('text')
         target_text = self.label_target.cget('text')
 
@@ -211,8 +214,7 @@ class AttackARPFrame(tk.Frame):
             self.log.update_out('ready for action')
 
     def start_arp(self):
-        # TODO: implement in arp_attack.py (?)
-
+        """ Starts an ARP spoofing attack on all combinations between victim pairs with respect to the target """
         if self.target in self.victims:
             messagebox.showerror("Error", "You cannot not set the target as a victim.")
         else:
@@ -241,7 +243,7 @@ class AttackARPFrame(tk.Frame):
             return
 
     def stop_arp(self):
-        # TODO: implement in arp_attack.py (?)
+        """ Stops all ARP spoofing attack """
         self.button_start.config(state=tk.NORMAL)
         self.button_stop.config(state=tk.DISABLED)
 
@@ -254,7 +256,5 @@ class AttackARPFrame(tk.Frame):
 
     @staticmethod
     def dis_err(case):
-        """
-        Displays a message box containing error
-        """
+        """ Displays a message box containing error """
         messagebox.showerror("Error", "Please make sure to first select " + case + " IP before pressing this button.")
