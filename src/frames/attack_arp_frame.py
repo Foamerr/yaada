@@ -42,7 +42,7 @@ class AttackARPFrame(tk.Frame):
 
         # INPUT #
         self.label_ip = tk.Label(self.labelframe_in,
-                                 text="Gateway to use (already provided is default)",
+                                 text="IP address with mask for the local network scan (provided is the default)",
                                  font=(self.controller.font, self.controller.font_size))
         self.label_ip.config(bg='#DADADA', fg='black')
         self.label_ip.pack(side='top', pady=5)
@@ -246,6 +246,10 @@ class AttackARPFrame(tk.Frame):
         """ Stops all ARP spoofing attack """
         self.button_start.config(state=tk.NORMAL)
         self.button_stop.config(state=tk.DISABLED)
+        self.ip_box.delete(0, tk.END)
+
+        self.label_victim.config(text="Victim(s): None")
+        self.label_target.config(text="Target: None")
 
         self.target = None
         self.victims = []
@@ -257,4 +261,4 @@ class AttackARPFrame(tk.Frame):
     @staticmethod
     def dis_err(case):
         """ Displays a message box containing error """
-        messagebox.showerror("Error", "Please make sure to first select " + case + " IP before pressing this button.")
+        messagebox.showerror("Error", "Please make sure to select " + case + " IP before pressing this button.")

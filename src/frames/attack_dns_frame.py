@@ -52,7 +52,7 @@ class AttackDNSFrame(tk.Frame):
         self.victims.pack(side='top', padx=10, pady=5)
 
         self.label_target = tk.Label(self.labelframe_in,
-                                     text="Target IP",
+                                     text="Target IP address",
                                      font=(self.controller.font, self.controller.font_size))
         self.label_target.config(bg='#DADADA', fg='black')
         self.label_target.pack(side='top', pady=5)
