@@ -23,6 +23,7 @@ class MainApplication(tk.Frame):
         self.tabs = None
         self.tab_map = None
         self.log = None
+        self.ARP = None
 
         self.set_style()
         self.set_size(parent)
@@ -72,7 +73,7 @@ class MainApplication(tk.Frame):
         self.tab_map = OrderedDict([
             (InitialFrame, 'Home'),
             (AttackARPFrame, 'ARP Poisoning'),
-            (AttackDNSFrame, 'DNS Spoofing'),
+            (AttackDNSFrame, 'DNS Cache Poisoning'),
             (HelpFrame, 'Help')
         ])
 

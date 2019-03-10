@@ -69,4 +69,4 @@ class LoggingFrame(tk.Frame):
     @staticmethod
     def get_prefix_out():
         """ Returns the prefix for the output """
-        return ' [' + str(datetime.now().time().strftime("%H:%M:%S")) + " «] "
+        return ' [' + str(datetime.now().time().strftime("%H:%M:%S")) + "] "
