@@ -4,9 +4,7 @@ import tkinter as tk
 class InitialFrame(tk.Frame):
 
     def __init__(self, parent, controller):
-        """
-        Initialises GUI of the frame used for the initially showed tab
-        """
+        """ Initialises GUI of the frame used for the initially showed tab """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
@@ -17,21 +15,20 @@ class InitialFrame(tk.Frame):
         top_frame.pack(side="top", fill="x"), bottom_frame.pack(side="top", fill="both", expand=True)
 
         # GUI COMPONENTS #
-        about_desc = "Hackerman is a tool that provides an easy way to easily execute ARP " \
-                     "poisoning and DNS spoofing attacks on a selected list of victims " \
-                     "with a target. The victims represent the victims of the attack." \
-                     " Under normal conditions, the target represents the attacker. " \
-                     "See the documentation on the `Help' tab for a more detailed description of the tool." \
+        about_desc = "YAADA is a tool that provides an easy way to easily execute ARP " \
+                     "poisoning and DNS cache poisoning attacks on a selected list of victims " \
+                     "with a target and a domain with a fake domain for ARP poisoning and DNS cache poisoning respectively." \
+                     "\nSee the documentation on the `Help' tab for a more detailed description of the tool." \
                      "\n\nThe `Home' tab provides a general description of the tool and explains " \
                      "the various tabs. \n\nThe `ARP Poisoning' tab provides a way to " \
                      "execute an ARP poisoning attack on a list of victims and a specified " \
                      "target. \n\nThe `DNS Spoofing' tab provides a way to execute a DNS spoofing " \
-                     "attack on a list victims for certain domains with a corresponding target. \n\nThe `Help' tab " \
+                     "attack on a list of victims for a certain domain. \n\nThe `Help' tab " \
                      "provides additional ways to get help and other documentation of the " \
                      "tool."
 
         self.label_welcome = tk.Label(top_frame,
-                                      text='Hackerman',
+                                      text='YAADA',
                                       font=(self.controller.font, 44))
         self.label_welcome.config(bg='#DADADA', fg='black')
         self.label_welcome.pack(side='top', pady=10)

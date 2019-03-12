@@ -6,6 +6,7 @@ class LoggingFrame(tk.Frame):
     stat = '[#] '
 
     def __init__(self, parent, controller):
+        """ Initialises GUI of the logging """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='black')
@@ -21,9 +22,7 @@ class LoggingFrame(tk.Frame):
         self.create_out_box()
 
     def create_out_box(self):
-        """
-        Creates a box for outputs and inputs
-        """
+        """ Creates a box for outputs and inputs """
         self.out_msg = tk.Canvas(self)
         self.out_msg.pack(side=tk.TOP, anchor=tk.W, fill=tk.BOTH, expand=tk.TRUE)
         self.out_msg.config(width=600, bg='black')
@@ -41,9 +40,7 @@ class LoggingFrame(tk.Frame):
         self.out_list.insert(tk.END, self.get_prefix_out().__add__(self.out_text))
 
     def create_stat_bar(self):
-        """
-        Creates a status bar
-        """
+        """ Creates a status bar """
         self.stat_text = self.empty_stat
         self.stat_msg = tk.Message(self,
                                    text=self.stat.__add__(self.stat_text),
@@ -54,11 +51,7 @@ class LoggingFrame(tk.Frame):
         self.stat_msg.config(bg='#DADADA', fg='black')
 
     def update_stat(self, msg, append=False):
-        """
-        Updates the status by either appending @msg or setting the text as @msg.
-
-        @precondition: @msg.type == str
-        """
+        """ Updates the status by either appending @msg or setting the text as @msg """
         if not append:
             self.stat_text = msg
         else:
@@ -67,9 +60,7 @@ class LoggingFrame(tk.Frame):
         self.update()
 
     def update_out(self, msg):
-        """
-        Updates the output by either appending @msg or setting the text as @msg.
-        """
+        """ Updates the output by either appending @msg or setting the text as @msg """
         self.out_list.insert(tk.END, self.get_prefix_out().__add__(msg))
         self.out_list.select_clear(self.out_list.size() - 2)
         self.out_list.select_set(tk.END)
@@ -77,7 +68,5 @@ class LoggingFrame(tk.Frame):
 
     @staticmethod
     def get_prefix_out():
-        """
-        Returns the prefix for the output
-        """
-        return ' [' + str(datetime.now().time().strftime("%H:%M:%S")) + " «] "
+        """ Returns the prefix for the output """
+        return ' [' + str(datetime.now().time().strftime("%H:%M:%S")) + "] "

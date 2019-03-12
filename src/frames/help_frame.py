@@ -6,9 +6,7 @@ from tkinter import messagebox
 class HelpFrame(tk.Frame):
 
     def __init__(self, parent, controller):
-        """
-        Initialises GUI of the frame used for the help tab
-        """
+        """ Initialises GUI of the frame used for the help tab """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
@@ -42,10 +40,8 @@ class HelpFrame(tk.Frame):
 
     @staticmethod
     def dis_about():
-        """
-        Displays a message box containing the `about' section information
-        """
-        messagebox.showinfo("About", "Hackerman is a tool for ARP and DNS spoofing \n"
+        """ Displays a message box containing the `about' section information """
+        messagebox.showinfo("About", "YAADA is a tool for ARP and DNS spoofing \n"
                                      "with different modalities that automatically \n"
                                      "poisons ARP caches and uses DNS queries to \n"
                                      "poison recursive DNS cache. \n"
@@ -53,8 +49,6 @@ class HelpFrame(tk.Frame):
 
     @staticmethod
     def dis_doc():
-        """
-        Opens documentation PDF file in default browser
-        """
+        """ Opens documentation PDF file in default browser """
         file = r'..\resources\documentation.pdf'
         webbrowser.open_new(file)

@@ -12,12 +12,10 @@ from frames.logging_frame import LoggingFrame
 class MainApplication(tk.Frame):
 
     def __init__(self, parent, *args, **kwargs):
-        """
-        Initialises the graphical user interface (GUI) of the application
-        """
+        """ Initialises the graphical user interface (GUI) of the application """
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.winfo_toplevel().title("hackerman")
+        self.winfo_toplevel().title("YAADA")
         self.configure(bg='black')
         self.font = "Georgia"
         self.font_size = 11
@@ -25,16 +23,14 @@ class MainApplication(tk.Frame):
         self.tabs = None
         self.tab_map = None
         self.log = None
+        self.ARP = None
 
         self.set_style()
         self.set_size(parent)
-        # self.create_menu_bar(parent)
         self.create_tabs()
 
     def set_style(self):
-        """
-        Sets the style and the dimension of the application
-        """
+        """ Sets the style and the dimension of the application """
         style = ttk.Style()
         style.element_create('Plain.Notebook.tab', 'from', 'default')
 
@@ -49,9 +45,7 @@ class MainApplication(tk.Frame):
 
     @staticmethod
     def set_size(parent):
-        """
-        Sets the width, height, and start positions of the applications
-        """
+        """ Sets the width, height, and start positions of the applications """
         x_start = 400
         y_start = 250
         width = 525
@@ -61,9 +55,7 @@ class MainApplication(tk.Frame):
         parent.resizable(0, 0)
 
     def create_tabs(self):
-        """
-        Creates tabs from frames and names provided in @tab_map
-        """
+        """ Creates tabs from frames and names provided in @tab_map """
         row = 0
         while row < 100:
             self.rowconfigure(row, weight=1)
@@ -81,7 +73,7 @@ class MainApplication(tk.Frame):
         self.tab_map = OrderedDict([
             (InitialFrame, 'Home'),
             (AttackARPFrame, 'ARP Poisoning'),
-            (AttackDNSFrame, 'DNS Spoofing'),
+            (AttackDNSFrame, 'DNS Cache Poisoning'),
             (HelpFrame, 'Help')
         ])
 
