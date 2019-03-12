@@ -2,11 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 import discovery as dis
-<<<<<<< HEAD
-from .arp_attack import ArpPoison
-=======
-from attacks.arp_attack import *
->>>>>>> 27936a785fc3bf73a21e06ec99b05832eb4dd90d
+from attacks.arp_attack import ArpPoison
 
 
 class AttackARPFrame(tk.Frame):
@@ -174,17 +170,12 @@ class AttackARPFrame(tk.Frame):
         try:
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
-<<<<<<< HEAD
-            target = str(target).split('at ', 1)[1]
-            self.log.update_out(
-                target + ' has been set as the target IP address')
-            self.label_target.config(text=('Target: ' + target))
-=======
+
             self.target = str(target).split('at ', 1)[1]
             self.target_mac = str(target).split(' ', 1)[0]
             self.log.update_out(self.target + ' has been set as the target IP address')
             self.label_target.config(text=('Target: ' + self.target))
->>>>>>> 27936a785fc3bf73a21e06ec99b05832eb4dd90d
+
             self.enable_start()
         except tk.TclError:
             self.dis_err('exactly one target')
@@ -252,14 +243,9 @@ class AttackARPFrame(tk.Frame):
             print(self.target)
             print(self.target_mac)
             print(self.victims)
-<<<<<<< HEAD
+
             self.arp = ArpPoison(target=self.target, victims=self.victims)
             self.arp.start_poisoning()
-=======
-            print(self.victims_mac)
-
-            self.arp = ArpPoisonVial(self.victims, self.target, self.victims_mac, self.target_mac)
->>>>>>> 27936a785fc3bf73a21e06ec99b05832eb4dd90d
 
             self.log.update_out('starting ARP poisoning')
             self.log.update_stat('ARP poisoning is active')
@@ -284,13 +270,8 @@ class AttackARPFrame(tk.Frame):
 
     @staticmethod
     def dis_err(case):
-<<<<<<< HEAD
         """
         Displays a message box containing error
         """
         messagebox.showerror("Error", "Please make sure to first select " +
                              case + " IP before pressing this button.")
-=======
-        """ Displays a message box containing error """
-        messagebox.showerror("Error", "Please make sure to select " + case + " IP before pressing this button.")
->>>>>>> 27936a785fc3bf73a21e06ec99b05832eb4dd90d
