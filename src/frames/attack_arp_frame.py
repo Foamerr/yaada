@@ -79,7 +79,7 @@ class AttackARPFrame(tk.Frame):
         self.ip_box.pack(side='top', padx=10, pady=5)
 
         self.button_victim = tk.Button(button_set_frame,
-                                       text="Set victim(s)",
+                                       text="Set victims",
                                        command=self.set_victim,
                                        width=15,
                                        font=(self.controller.font, self.controller.font_size))
@@ -102,7 +102,7 @@ class AttackARPFrame(tk.Frame):
         self.labelframe_out.pack(pady=0)
 
         self.label_victim = tk.Label(self.labelframe_out,
-                                     text="Victim(s): None",
+                                     text="Victims: None",
                                      font=(self.controller.font,
                                            self.controller.font_size),
                                      width=53,
@@ -191,40 +191,33 @@ class AttackARPFrame(tk.Frame):
         """ Sets the victim(s) (MAC/IP combination(s)) """
         selection = self.ip_box.curselection()
 
-        if len(selection) != 0:
+        if len(selection) >= 2:
             result = []
             result_mac = []
-            if len(selection) > 1:
-                for i in selection:
-                    entry = self.ip_box.get(i)
-                    ip = str(entry).split('at ', 1)[0]
-                    mac = str(entry).split('at ', 1)[1]
-                    mac = mac.split(' ', 1)[0]
-                    result_mac.append(mac)
-                    result.append(ip)
-                strings = ', '.join(result)
-                self.log.update_out(strings + ' have been set as the victims')
-                self.label_victim.config(text='Victims: ' + strings)
-                self.enable_start()
-                self.victims = result
-                self.victims_mac = result_mac
-            else:
-                entry = str(self.ip_box.get(selection)).split('at ', 1)[0]
-                self.log.update_out(entry + ' has been set as the victims')
-                self.label_victim.config(text='Victim: ' + entry)
-                self.enable_start()
-                self.victims = [entry]
+            for i in selection:
+                entry = self.ip_box.get(i)
+                ip = str(entry).split('at ', 1)[0]
+                mac = str(entry).split('at ', 1)[1]
+                mac = mac.split(' ', 1)[0]
+                result_mac.append(mac)
+                result.append(ip)
+            strings = ', '.join(result)
+            self.log.update_out(strings + ' have been set as the victims')
+            self.label_victim.config(text='Victims: ' + strings)
+            self.enable_start()
+            self.victims = result
+            self.victims_mac = result_mac
 
             self.ip_box.select_clear(0, tk.END)
         else:
-            self.dis_err('at least one victim')
+            self.dis_err('at least two victims')
 
     def enable_start(self):
         """ Checks if the start button should be enabled """
         victim_text = self.label_victim.cget('text')
         target_text = self.label_target.cget('text')
 
-        if (victim_text != 'Victim(s): None') and (target_text != 'Target: None'):
+        if (victim_text != 'Victims: None') and (target_text != 'Target: None'):
             self.button_start.config(state=tk.NORMAL)
             self.log.update_out('both victim and target set have been set')
             self.log.update_out('ready for action')
@@ -273,7 +266,7 @@ class AttackARPFrame(tk.Frame):
         self.button_stop.config(state=tk.DISABLED)
         self.ip_box.delete(0, tk.END)
 
-        self.label_victim.config(text="Victim(s): None")
+        self.label_victim.config(text="Victims: None")
         self.label_target.config(text="Target: None")
 
         self.target = None

