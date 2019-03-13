@@ -46,7 +46,6 @@ class ArpPois(threading.Thread):
         signal.signal(signal.SIGINT, signal_handler)
 
         while 1:
-            # TODO: WHILE NOT THE SAME
             for ip, mac in zip(self.victims_ip, self.victims_mac):
                 for ip2, mac2 in zip(self.victims_ip, self.victims_mac):
                     if ip != ip2:
