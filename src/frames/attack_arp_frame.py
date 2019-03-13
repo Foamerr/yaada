@@ -3,6 +3,7 @@ from tkinter import messagebox
 
 import discovery as dis
 from attacks.arp_attack import ArpPoison
+# from attacks.arp import ArpSpoof
 
 
 class AttackARPFrame(tk.Frame):
@@ -45,16 +46,19 @@ class AttackARPFrame(tk.Frame):
 
         # INPUT #
         self.label_ip = tk.Label(self.labelframe_in,
-                                 text="IP address with mask for the local network scan (provided is the default)",
+                                 text="Scan the network and select the targets and victims",
                                  font=(self.controller.font, self.controller.font_size))
         self.label_ip.config(bg='#DADADA', fg='black')
         self.label_ip.pack(side='top', pady=5)
 
-        self.textbox_ip = tk.Entry(self.labelframe_in,
-                                   width=20,
-                                   font=(self.controller.font, self.controller.font_size))
-        self.textbox_ip.insert(0, (dis.get_default_gateway() + '/24'))
-        self.textbox_ip.pack(side='top', pady=5)
+        # self.textbox_ip = tk.Listbox(self.labelframe_in,
+        #                              width=53,
+        #                              height=3,
+        #                              font=(self.controller.font, self.controller.font_size))
+        # interfaces = netifaces.interfaces()
+        # for interface in interfaces:
+        #     self.textbox_ip.insert(0, interface)
+        # self.textbox_ip.pack(side='top', pady=5)
 
         self.button_scan = tk.Button(self.labelframe_in,
                                      text="Scan",
@@ -139,25 +143,24 @@ class AttackARPFrame(tk.Frame):
 
     def update_local(self):
         """ Scan the network and store all found IP/MAC combinations in a listbox """
-        address = self.textbox_ip.get()
+        # interface = self.textbox_ip.get(self.textbox_ip.curselection())
 
         self.ip_box.delete(0, tk.END)
         self.log.update_stat('Searching for local network addresses')
         self.log.update_out('searching for local network addresses')
 
-        options = dis.arp_ping(netmask=address)
+        combinations = dis.scan_local_network()
         local_ip = dis.get_local_host_ip()
         local_mac = dis.mac_for_ip(dis.get_local_host_ip())
-        self.ip_box.insert(tk.END, local_mac + ' at ' + local_ip + ' (self)')
+        self.ip_box.insert(tk.END, local_ip + ' at ' + local_mac + ' (self)')
 
-        if not len(options) == 0:
-            for option in options:
-
-                ipv4 = option.split('at ', 1)[1]
-                if dis.get_default_gateway() == ipv4:
-                    self.ip_box.insert(tk.END, option + ' (gateway)')
+        if combinations:
+            for ip in combinations:
+                print(ip)
+                if dis.get_default_gateway() == ip:
+                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (gateway)')
                 else:
-                    self.ip_box.insert(tk.END, option)
+                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
         else:
             self.ip_box.insert(tk.END, 'could not find any IP addresses')
             self.log.update_out('could not find any IP addresses')
@@ -171,8 +174,11 @@ class AttackARPFrame(tk.Frame):
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
 
-            self.target = str(target).split('at ', 1)[1]
-            self.target_mac = str(target).split(' ', 1)[0]
+            self.target = str(target).split('at ', 1)[0]
+
+            self.target_mac = str(target).split('at ', 1)[1]
+            self.target_mac = str(self.target_mac).split(' ', 1)[0]
+
             self.log.update_out(self.target + ' has been set as the target IP address')
             self.label_target.config(text=('Target: ' + self.target))
 
@@ -190,8 +196,8 @@ class AttackARPFrame(tk.Frame):
             if len(selection) > 1:
                 for i in selection:
                     entry = self.ip_box.get(i)
-                    ip = str(entry).split('at ', 1)[1]
-                    mac = str(entry).split(' ', 1)[0]
+                    ip = str(entry).split('at ', 1)[0]
+                    mac = str(entry).split(' ', 1)[1]
                     result_mac.append(mac)
                     result.append(ip)
                 strings = ', '.join(result)
@@ -201,7 +207,7 @@ class AttackARPFrame(tk.Frame):
                 self.victims = result
                 self.victims_mac = result_mac
             else:
-                entry = str(self.ip_box.get(selection)).split('at ', 1)[1]
+                entry = str(self.ip_box.get(selection)).split('at ', 1)[0]
                 self.log.update_out(entry + ' has been set as the victims')
                 self.label_victim.config(text='Victim: ' + entry)
                 self.enable_start()
@@ -239,13 +245,20 @@ class AttackARPFrame(tk.Frame):
                 victims.append(victim)
             self.victims = victims
 
-            # TODO: Change to dictionary with MAC or IP as key, etc
-            print(self.target)
-            print(self.target_mac)
-            print(self.victims)
+            print("target: " + self.target)
+            print("target mac: " + self.target_mac)
+            print("all victims: " + str(self.victims))
 
             self.arp = ArpPoison(target=self.target, victims=self.victims)
             self.arp.start_poisoning()
+            # self.arp = ArpSpoof()
+            # for vic in self.victims:
+            #     self.arp.attach_vic(vic)
+            # self.arp.attach_tar(self.target, self.target_mac)
+            #
+            # self.arp.start()
+
+            print('ARP Spoofing ' + str(self.victims) + " and " + self.target)
 
             self.log.update_out('starting ARP poisoning')
             self.log.update_stat('ARP poisoning is active')

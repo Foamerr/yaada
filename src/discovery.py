@@ -1,9 +1,12 @@
 from __future__ import absolute_import, division, print_function
 
 import netifaces
-import socket
 
-from scapy.all import srp, conf
+import scapy.config
+import scapy.config
+import scapy.layers.l2
+import scapy.route
+from scapy.all import *
 from scapy.layers.l2 import Ether, ARP
 
 
@@ -65,3 +68,44 @@ def mac_for_ip(ip):
         if if_ip == ip:
             return if_mac
     return None
+
+
+def long_to_net(arg):
+    if arg <= 0 or arg >= 0xFFFFFFFF:
+        raise ValueError("illegal netmask value", hex(arg))
+    return 32 - int(round(math.log(0xFFFFFFFF - arg, 2)))
+
+
+def to_cidr(network_bytes, netmask_bytes):
+    network = scapy.utils.ltoa(network_bytes)
+    netmask = long_to_net(netmask_bytes)
+    net = "%s/%s" % (network, netmask)
+    if netmask < 16:
+        print('too big')
+        return None
+    return net
+
+
+def scan_and_print_neighbors(net, interface, combinations, timeout=0.1):
+    try:
+        ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=False)
+        for s, r in ans.res:
+            mac = r.sprintf("%Ether.src%")
+            ip = r.sprintf("%ARP.psrc%")
+            combinations[ip] = mac
+    except socket.error as e:
+        raise
+
+
+def scan_local_network():
+    combinations = {}
+    for network, netmask, _, interface, address, _ in scapy.config.conf.route.routes:
+        # Skip lo and default gateway
+        if network == 0 or interface == 'lo' or address == '127.0.0.1' or address == '0.0.0.0':
+            continue
+        if netmask <= 0 or netmask == 0xFFFFFFFF:
+            continue
+        net = to_cidr(network, netmask)
+        if net:
+            scan_and_print_neighbors(net, interface, combinations)
+    return combinations
