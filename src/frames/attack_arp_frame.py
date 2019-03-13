@@ -2,8 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 
 import discovery as dis
-from attacks.arp_attack import ArpPoison
-# from attacks.arp import ArpSpoof
+# from attacks.arp_attack import ArpPoison
+# from attacks.arp import *
+from attacks.arp_multiple_vic import *
 
 
 class AttackARPFrame(tk.Frame):
@@ -157,10 +158,10 @@ class AttackARPFrame(tk.Frame):
         if combinations:
             for ip in combinations:
                 print(ip)
-                if dis.get_default_gateway() == ip:
-                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (gateway)')
-                else:
-                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
+                # if dis.get_default_gateway() == ip:
+                #     self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (gateway)')
+                # else:
+                self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
         else:
             self.ip_box.insert(tk.END, 'could not find any IP addresses')
             self.log.update_out('could not find any IP addresses')
@@ -197,7 +198,8 @@ class AttackARPFrame(tk.Frame):
                 for i in selection:
                     entry = self.ip_box.get(i)
                     ip = str(entry).split('at ', 1)[0]
-                    mac = str(entry).split(' ', 1)[1]
+                    mac = str(entry).split('at ', 1)[1]
+                    mac = mac.split(' ', 1)[0]
                     result_mac.append(mac)
                     result.append(ip)
                 strings = ', '.join(result)
@@ -245,20 +247,21 @@ class AttackARPFrame(tk.Frame):
                 victims.append(victim)
             self.victims = victims
 
-            print("target: " + self.target)
-            print("target mac: " + self.target_mac)
-            print("all victims: " + str(self.victims))
+            # print("target: " + self.target)
+            # print("target mac: " + self.target_mac)
+            # print("all victims: " + str(self.victims))
 
-            self.arp = ArpPoison(target=self.target, victims=self.victims)
-            self.arp.start_poisoning()
+            # self.arp = ArpPoison(target=self.target, victims=self.victims)
+            # self.arp.start_poisoning()
             # self.arp = ArpSpoof()
             # for vic in self.victims:
             #     self.arp.attach_vic(vic)
             # self.arp.attach_tar(self.target, self.target_mac)
-            #
-            # self.arp.start()
 
-            print('ARP Spoofing ' + str(self.victims) + " and " + self.target)
+            self.arp = ArpPois()
+            self.arp.set_victims(self.victims, self.victims_mac)
+            self.arp.set_target(self.target, self.target_mac)
+            self.arp.run()
 
             self.log.update_out('starting ARP poisoning')
             self.log.update_stat('ARP poisoning is active')

@@ -3,7 +3,6 @@ from __future__ import absolute_import, division, print_function
 import netifaces
 
 import scapy.config
-import scapy.config
 import scapy.layers.l2
 import scapy.route
 from scapy.all import *
@@ -19,6 +18,7 @@ def arp_ping(netmask="192.168.1.0/24"):
 
 def get_default_gateway():
     """ Returns the default gateway of a host """
+    # TODO: Doesn't work when only using enp0s3
     gws = netifaces.gateways()
     return str(gws['default'][netifaces.AF_INET][0])
 
@@ -86,7 +86,7 @@ def to_cidr(network_bytes, netmask_bytes):
     return net
 
 
-def scan_and_print_neighbors(net, interface, combinations, timeout=0.1):
+def scan_and_print_neighbors(net, interface, combinations, timeout=0.01):
     try:
         ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=False)
         for s, r in ans.res:
