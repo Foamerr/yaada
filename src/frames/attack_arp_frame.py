@@ -31,16 +31,16 @@ class AttackARPFrame(tk.Frame):
         self.labelframe_in.config(bg='#DADADA', fg='black')
         self.labelframe_in.pack(pady=15)
 
-        button_set_frame, bottom_frame = tk.Frame(
-            self.labelframe_in, height=55), tk.Frame(self)
+        button_set_frame, below_buttons_frame, bottom_frame = tk.Frame(self.labelframe_in, height=55), \
+                                                              tk.Frame(self.labelframe_in), tk.Frame(self)
         button_start_frame = tk.Frame(bottom_frame)
 
-        button_set_frame.configure(
-            bg='#DADADA'), top_frame.configure(bg='#DADADA')
-        button_start_frame.configure(
-            bg='#DADADA'), bottom_frame.configure(bg='#DADADA')
+        button_set_frame.configure(bg='#DADADA'), top_frame.configure(bg='#DADADA')
+        below_buttons_frame.configure(bg='#DADADA')
+        button_start_frame.configure(bg='#DADADA'), bottom_frame.configure(bg='#DADADA')
 
         top_frame.pack(side="top", fill="x")
+        below_buttons_frame.pack(side="bottom", fill="both", expand=True)
         button_set_frame.pack(side="bottom", fill="both", expand=True)
         bottom_frame.pack(side="top", fill="both", expand=True)
         button_start_frame.pack(side="bottom", fill="both", expand=True)
@@ -51,15 +51,6 @@ class AttackARPFrame(tk.Frame):
                                  font=(self.controller.font, self.controller.font_size))
         self.label_ip.config(bg='#DADADA', fg='black')
         self.label_ip.pack(side='top', pady=5)
-
-        # self.textbox_ip = tk.Listbox(self.labelframe_in,
-        #                              width=53,
-        #                              height=3,
-        #                              font=(self.controller.font, self.controller.font_size))
-        # interfaces = netifaces.interfaces()
-        # for interface in interfaces:
-        #     self.textbox_ip.insert(0, interface)
-        # self.textbox_ip.pack(side='top', pady=5)
 
         self.button_scan = tk.Button(self.labelframe_in,
                                      text="Scan",
@@ -141,6 +132,28 @@ class AttackARPFrame(tk.Frame):
         self.button_stop.config(bg='#DADADA', fg='black')
         self.button_stop.place(relx=0.70, rely=0.5, anchor=tk.CENTER)
         self.button_stop.config(state=tk.DISABLED)
+
+        self.label_time = tk.Label(below_buttons_frame,
+                                   text="Please enter a time interval to send packets (default is every 5 seconds)",
+                                   font=(self.controller.font, self.controller.font_size))
+        self.label_time.config(bg='#DADADA', fg='black')
+        self.label_time.pack(side='top', pady=5)
+
+        self.max_value = tk.StringVar()
+        self.max_value.trace('w', self.limit_size)
+
+        self.textbox_time = tk.Entry(below_buttons_frame,
+                                     width=1,
+                                     textvariable=self.max_value,
+                                     font=(self.controller.font, self.controller.font_size))
+        self.textbox_time.pack(side='top', padx=10, pady=5)
+
+        self.textbox_time.insert(tk.END, 5)
+
+    def limit_size(self, *args):
+        value = self.max_value.get()
+        if len(value) > 1:
+            self.max_value.set(value[:1])
 
     def update_local(self):
         """ Scan the network and store all found IP/MAC combinations in a listbox """
@@ -240,21 +253,11 @@ class AttackARPFrame(tk.Frame):
                 victims.append(victim)
             self.victims = victims
 
-            # print("target: " + self.target)
-            # print("target mac: " + self.target_mac)
-            # print("all victims: " + str(self.victims))
-
-            # self.arp = ArpPoison(target=self.target, victims=self.victims)
-            # self.arp.start_poisoning()
-            # self.arp = ArpSpoof()
-            # for vic in self.victims:
-            #     self.arp.attach_vic(vic)
-            # self.arp.attach_tar(self.target, self.target_mac)
-
             self.arp = ArpPois()
+            self.arp.set_time(self.max_value.get())
             self.arp.set_victims(self.victims, self.victims_mac)
             self.arp.set_target(self.target, self.target_mac)
-            self.arp.start()
+            self.arp.start_poisoning()
 
             self.log.update_out('starting ARP poisoning')
             self.log.update_stat('ARP poisoning is active')
@@ -266,14 +269,13 @@ class AttackARPFrame(tk.Frame):
         self.button_stop.config(state=tk.DISABLED)
         self.ip_box.delete(0, tk.END)
 
-        self.arp.stop()
+        self.arp.stop_poisoning()
 
         self.label_victim.config(text="Victims: None")
         self.label_target.config(text="Target: None")
 
         self.target = None
         self.victims = []
-        self.arp.stop_poisoning()
 
         self.log.update_out('stopping ARP poisoning')
         self.log.update_stat('ARP poisoning is inactive')
