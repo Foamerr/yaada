@@ -254,7 +254,7 @@ class AttackARPFrame(tk.Frame):
             self.arp = ArpPois()
             self.arp.set_victims(self.victims, self.victims_mac)
             self.arp.set_target(self.target, self.target_mac)
-            self.arp.run()
+            self.arp.start()
 
             self.log.update_out('starting ARP poisoning')
             self.log.update_stat('ARP poisoning is active')
@@ -265,6 +265,8 @@ class AttackARPFrame(tk.Frame):
         self.button_start.config(state=tk.NORMAL)
         self.button_stop.config(state=tk.DISABLED)
         self.ip_box.delete(0, tk.END)
+
+        self.arp.stop()
 
         self.label_victim.config(text="Victims: None")
         self.label_target.config(text="Target: None")
