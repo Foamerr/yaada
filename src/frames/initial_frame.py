@@ -23,7 +23,8 @@ class InitialFrame(tk.Frame):
                      "the various tabs. \n\nThe `ARP Poisoning' tab provides a way to " \
                      "execute an ARP poisoning attack on a list of victims and a specified " \
                      "target. \n\nThe `DNS Spoofing' tab provides a way to execute a DNS spoofing " \
-                     "attack on a list of victims for a certain domain. \n\nThe `Help' tab " \
+                     "attack a target domain with a fake IP to redirect to. This tab will only be enabled after executing an ARP poisoning attack." \
+                     "One should perform an ARP poisoning attack on a DNS name server and authoritative server in order to execute DNS cache poisoning afterwards. \n\nThe `Help' tab " \
                      "provides additional ways to get help and other documentation of the " \
                      "tool."
 
@@ -31,7 +32,7 @@ class InitialFrame(tk.Frame):
                                       text='YAADA',
                                       font=(self.controller.font, 44))
         self.label_welcome.config(bg='#DADADA', fg='black')
-        self.label_welcome.pack(side='top', pady=10)
+        self.label_welcome.pack(side='top', pady=0)
         self.labelframe_gen_widget = tk.LabelFrame(bottom_frame,
                                                    text="General description",
                                                    font=(self.controller.font, self.controller.font_size, "bold"))
@@ -43,5 +44,5 @@ class InitialFrame(tk.Frame):
                                          width=53,
                                          font=(self.controller.font, self.controller.font_size))
         self.label_gen_widget.config(bg='#DADADA', fg='black')
-        self.labelframe_gen_widget.pack(padx=5, pady=5)
-        self.label_gen_widget.pack(padx=10, pady=10)
+        self.labelframe_gen_widget.pack(padx=5, pady=0)
+        self.label_gen_widget.pack(padx=10, pady=0)
