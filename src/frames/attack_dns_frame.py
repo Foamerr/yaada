@@ -39,10 +39,10 @@ class AttackDNSFrame(tk.Frame):
 
         # INPUT #
         self.label_domain = tk.Label(self.labelframe_in,
-                                     text="Target domain (e.g., https://www.google.com)",
+                                     text="Target domain (e.g., www.realsite.com)",
                                      font=(self.controller.font, self.controller.font_size))
         self.label_domain.config(bg='#DADADA', fg='black')
-        self.label_domain.pack(side='top', pady=10)
+        self.label_domain.pack(side='top', pady=5)
 
         self.textbox_domain = tk.Entry(self.labelframe_in,
                                        width=53,
@@ -58,7 +58,7 @@ class AttackDNSFrame(tk.Frame):
         self.button_domain.pack(side='top', pady=10)
 
         self.label_domain_fake = tk.Label(self.labelframe_in,
-                                          text="Fake IP (e.g., https://www.fake.google.com)",
+                                          text="Fake IP (the IP the victim will visit when trying to visit the domain above)",
                                           font=(self.controller.font, self.controller.font_size))
         self.label_domain_fake.config(bg='#DADADA', fg='black')
         self.label_domain_fake.pack(side='top', pady=10)

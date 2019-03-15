@@ -14,7 +14,7 @@ class LoggingFrame(tk.Frame):
         self.empty_stat = 'The current status will be displayed here'
         self.stat_text = None
         self.stat_msg = None
-        self.out_text = 'output will be displayed here'
+        self.out_text = 'Output will be displayed here'
         self.out_msg = None
         self.out_list = None
         self.font_size = 11

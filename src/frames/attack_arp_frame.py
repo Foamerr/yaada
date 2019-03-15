@@ -159,7 +159,7 @@ class AttackARPFrame(tk.Frame):
 
         self.ip_box.delete(0, tk.END)
         self.log.update_stat('Searching for local network addresses')
-        self.log.update_out('searching for local network addresses')
+        self.log.update_out('Searching for local network addresses')
 
         combinations = dis.scan_local_network()
         local_ip = dis.get_local_host_ip()
@@ -174,11 +174,10 @@ class AttackARPFrame(tk.Frame):
                 # else:
                 self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
         else:
-            self.ip_box.insert(tk.END, 'could not find any IP addresses')
-            self.log.update_out('could not find any IP addresses')
+            self.ip_box.insert(tk.END, 'Could not find any other IP addresses')
 
         self.log.update_stat('Finished searching for local network addresses')
-        self.log.update_out('finished searching for local network addresses')
+        self.log.update_out('Finished searching for local network addresses')
 
     def set_target(self):
         """ Sets the target (MAC/IP combination) """
@@ -191,7 +190,7 @@ class AttackARPFrame(tk.Frame):
             self.target_mac = str(target).split('at ', 1)[1]
             self.target_mac = str(self.target_mac).split(' ', 1)[0]
 
-            self.log.update_out(self.target + ' has been set as the target IP address')
+            self.log.update_out(self.target + ' has been set as the target IP address.')
             self.label_target.config(text=('Target: ' + self.target))
 
             self.enable_start()
@@ -207,13 +206,13 @@ class AttackARPFrame(tk.Frame):
             result_mac = []
             for i in selection:
                 entry = self.ip_box.get(i)
-                ip = str(entry).split('at ', 1)[0]
-                mac = str(entry).split('at ', 1)[1]
+                ip = str(entry).split(' at ', 1)[0]
+                mac = str(entry).split(' at ', 1)[1]
                 mac = mac.split(' ', 1)[0]
                 result_mac.append(mac)
                 result.append(ip)
             strings = ', '.join(result)
-            self.log.update_out(strings + ' have been set as the victims')
+            self.log.update_out(strings + ' have been set as the victims.')
             self.label_victim.config(text='Victims: ' + strings)
             self.enable_start()
             self.victims = result
@@ -230,8 +229,8 @@ class AttackARPFrame(tk.Frame):
 
         if (victim_text != 'Victims: None') and (target_text != 'Target: None'):
             self.button_start.config(state=tk.NORMAL)
-            self.log.update_out('both victim and target set have been set')
-            self.log.update_out('ready for action')
+            self.log.update_out('Both victim and target set have been set.')
+            self.log.update_out('Ready for action!')
 
     def start_arp(self):
         """ Starts an ARP spoofing attack on all combinations between victim pairs with respect to the target """
@@ -256,8 +255,16 @@ class AttackARPFrame(tk.Frame):
             self.arp.set_target(self.target, self.target_mac)
             self.arp.start_poisoning()
 
-            self.log.update_out('starting ARP poisoning')
-            self.log.update_stat('ARP poisoning is active')
+            self.log.update_out('------------------Currently ARP Poisoning----------------------------------------')
+            self.log.update_out('Victim: ' + ', '.join(self.victims))
+            self.log.update_out('Target: ' + self.target)
+            self.log.update_out('--------------------------------------------------------------------------')
+            self.log.update_out('It is now possible to execute a DNS cache poisoning attack.')
+
+            self.log.update_stat('ARP Poisoning is active. See above logs for details.')
+
+            self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
+
             return
 
     def stop_arp(self):
@@ -274,8 +281,10 @@ class AttackARPFrame(tk.Frame):
         self.target = None
         self.victims = []
 
-        self.log.update_out('stopping ARP poisoning')
+        self.log.update_out('Stopping ARP poisoning')
         self.log.update_stat('ARP poisoning is inactive')
+
+        self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="disabled")
         return
 
     @staticmethod

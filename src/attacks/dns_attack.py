@@ -14,7 +14,7 @@ def responder(auth_ip, rec_ip, mal_ip):
         print(pkt.show())
 
         if DNS in pkt and pkt[DNS].opcode == 0 and pkt[DNS].ancount == 0 and str(pkt[IP].src) == rec_ip and \
-                str(pkt[IP]) == auth_ip:
+                str(pkt[IP].dst) == auth_ip:
 
             print(str(pkt[IP].src))
             print(str(pkt[IP].dst))
@@ -33,4 +33,4 @@ def responder(auth_ip, rec_ip, mal_ip):
     return get_resp
 
 
-sniff(iface="enp0s3", prn=responder(auth_dns, rec_dns, mal_dns))
+sniff(prn=responder(auth_dns, rec_dns, mal_dns))

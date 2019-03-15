@@ -84,6 +84,8 @@ class MainApplication(tk.Frame):
             self.notebook.add(frame, text=frame_name)
         self.tabs[tab.__name__] = frame
 
+        self.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="disabled")
+
 
 if __name__ == '__main__':
     root = tk.Tk()
