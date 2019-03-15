@@ -2,9 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 import discovery as dis
-# from attacks.arp_attack import ArpPoison
-# from attacks.arp import *
-from attacks.arp_multiple_vic import *
+from attacks.arp_attack import ArpPois
 
 
 class AttackARPFrame(tk.Frame):
@@ -244,7 +242,6 @@ class AttackARPFrame(tk.Frame):
             self.button_stop.config(state=tk.NORMAL)
             self.button_start.config(state=tk.DISABLED)
 
-            # Convert these to method parameters rather than global vars
             self.target = str(self.target).split(' ', 1)[0]
 
             victims = []
