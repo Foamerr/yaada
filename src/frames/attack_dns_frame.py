@@ -191,3 +191,15 @@ class AttackDNSFrame(tk.Frame):
                 return False
         except:
             return False
+
+
+def set_dns_settings(vic, vic_mac, tar, tar_mac):
+    global victims, victims_mac, target, target_mac
+    victims = vic
+    victims_mac = vic_mac
+    target = tar
+    target_mac = tar_mac
+
+
+def get_dns_settings():
+    return victims, victims_mac, target, target_mac

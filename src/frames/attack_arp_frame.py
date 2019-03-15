@@ -3,6 +3,7 @@ from tkinter import messagebox
 
 import discovery as dis
 from attacks.arp_attack import ArpPois
+import attack_dns_frame
 
 
 class AttackARPFrame(tk.Frame):
@@ -265,6 +266,8 @@ class AttackARPFrame(tk.Frame):
 
             self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
 
+            attack_dns_frame.set_dns_settings(self.victims, self.victims_mac, self.target, self.target_mac)
+
             return
 
     def stop_arp(self):
@@ -285,6 +288,7 @@ class AttackARPFrame(tk.Frame):
         self.log.update_stat('ARP poisoning is inactive')
 
         self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="disabled")
+
         return
 
     @staticmethod
