@@ -3,6 +3,8 @@ from tkinter import messagebox
 
 import discovery as dis
 from attacks.arp_attack import ArpPois
+
+from frames.attack_dns_frame import *
 import attack_dns_frame
 
 
@@ -133,7 +135,7 @@ class AttackARPFrame(tk.Frame):
         self.button_stop.config(state=tk.DISABLED)
 
         self.label_time = tk.Label(below_buttons_frame,
-                                   text="Please enter a time interval to send packets (default is every 5 seconds)",
+                                   text="Please enter a time interval to send packets\n(default is every 5 seconds)",
                                    font=(self.controller.font, self.controller.font_size))
         self.label_time.config(bg='#DADADA', fg='black')
         self.label_time.pack(side='top', pady=5)
@@ -266,7 +268,7 @@ class AttackARPFrame(tk.Frame):
 
             self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
 
-            attack_dns_frame.set_dns_settings(self.victims, self.victims_mac, self.target, self.target_mac)
+            dis.set_dns_settings(self.victims, self.target)
 
             return
 

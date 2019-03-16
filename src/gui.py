@@ -24,6 +24,7 @@ class MainApplication(tk.Frame):
         self.tab_map = None
         self.log = None
         self.ARP = None
+        self.DNS = None
 
         self.set_style()
         self.set_size(parent)

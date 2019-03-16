@@ -3,6 +3,7 @@ import urllib
 from tkinter import messagebox
 
 import discovery as dis
+from attacks.dns_attack import DnsPois
 
 
 class AttackDNSFrame(tk.Frame):
@@ -15,8 +16,11 @@ class AttackDNSFrame(tk.Frame):
         self.font = "Georgia"
         self.font_size = 11
         self.arp = None
+        self.dns = None
         self.domain = None
         self.fake_domain = None
+        self.auth_dns = None
+        self.rec_dns = None
         self.log = self.controller.log
 
         # FRAMES SETUP #
@@ -38,6 +42,18 @@ class AttackDNSFrame(tk.Frame):
         button_start_frame.pack(side="bottom", fill="both", expand=True)
 
         # INPUT #
+        self.label_intro = tk.Label(self.labelframe_in,
+                                    text="The DNS cache poisoning attack will be performed on the first two victims "
+                                         "from the ARP Poisoning attack. To clarify, the first victim will act as "
+                                         "the Auth. DNS server, whereas the second victim will act as the DNS NS. "
+                                         "Furthermore, the target has to be your IP as you will not see the DNS "
+                                         "traffic otherwise.",
+                                    wraplength=450,
+                                    justify=tk.LEFT,
+                                    font=(self.controller.font, self.controller.font_size))
+        self.label_intro.config(bg='#DADADA', fg='black')
+        self.label_intro.pack(side='top', pady=5)
+
         self.label_domain = tk.Label(self.labelframe_in,
                                      text="Target domain (e.g., www.realsite.com)",
                                      font=(self.controller.font, self.controller.font_size))
@@ -126,12 +142,12 @@ class AttackDNSFrame(tk.Frame):
         """ Sets the domain """
         self.domain = self.textbox_domain.get()
 
-        if self.check_url(self.domain):
-            self.log.update_out(self.domain + ' has been set as the target domain')
-            self.label_domain.config(text=('Target domain: ' + self.domain))
-            self.enable_start()
-        else:
-            messagebox.showerror("Error", "Please make sure the domain has been correctly formatted.")
+        # if self.check_url(self.domain):
+        self.log.update_out(self.domain + ' has been set as the target domain')
+        self.label_domain.config(text=('Target domain: ' + self.domain))
+        self.enable_start()
+        # else:
+        #    messagebox.showerror("Error", "Please make sure the domain has been correctly formatted.")
 
     def set_fake_domain(self):
         """ Sets the domain """
@@ -142,26 +158,35 @@ class AttackDNSFrame(tk.Frame):
 
     def enable_start(self):
         """ Checks if the start button should be enabled """
-        fake_domain_text = self.label_domain_fake.cget('text')
+        fake_domain_text = self.label_fake_domain.cget('text')
         domain_text = self.label_domain.cget('text')
 
         if (fake_domain_text != 'Fake IP: None') and (domain_text != 'Target domain: None'):
             self.button_start.config(state=tk.NORMAL)
-            self.log.update_out('both victim(s) and domain(s) set have been set')
-            self.log.update_out('ready for action')
+            self.log.update_out('Both victim(s) and domain(s) set have been set')
+            self.log.update_out('Ready for action!')
 
     def start_dns(self):
         """ Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target """
         self.button_stop.config(state=tk.NORMAL)
         self.button_start.config(state=tk.DISABLED)
 
-        print(self.fake_domain)
-        print(self.domain)
-
         self.controller.log.update_out('Starting DNS spoofing')
 
+        self.auth_dns, self.rec_dns = dis.get_dns_settings()
+
+        self.dns = DnsPois()
+        self.dns.set(self.auth_dns, self.rec_dns, self.fake_domain, self.domain)
+        self.dns.start()
+
         self.controller.log.update_stat('DNS spoofing is active')
-        self.controller.log.update_out('DNS spoofing is active')
+
+        self.log.update_out('------------------Currently DNS Poisoning----------------------------------------')
+        self.log.update_out('Target domain: ' + self.domain)
+        self.log.update_out('Fake IP: ' + self.fake_domain)
+        self.log.update_out('DNS Auth. server: ' + self.auth_dns)
+        self.log.update_out('DNS NS: ' + self.rec_dns)
+        self.log.update_out('--------------------------------------------------------------------------')
 
     def stop_dns(self):
         """ Stops all DNS spoofing attack """
@@ -191,15 +216,3 @@ class AttackDNSFrame(tk.Frame):
                 return False
         except:
             return False
-
-
-def set_dns_settings(vic, vic_mac, tar, tar_mac):
-    global victims, victims_mac, target, target_mac
-    victims = vic
-    victims_mac = vic_mac
-    target = tar
-    target_mac = tar_mac
-
-
-def get_dns_settings():
-    return victims, victims_mac, target, target_mac
