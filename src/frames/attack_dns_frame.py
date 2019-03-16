@@ -173,6 +173,7 @@ class AttackDNSFrame(tk.Frame):
 
         self.controller.log.update_out('Starting DNS spoofing')
 
+        # TODO: Doesn't work when NS is above Auth. IP...
         self.auth_dns, self.rec_dns = dis.get_dns_settings()
 
         self.dns = DnsPois()
