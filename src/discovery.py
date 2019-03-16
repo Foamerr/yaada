@@ -99,25 +99,35 @@ def scan_and_print_neighbors(net, interface, combinations, timeout=0.01):
 
 def scan_local_network():
     combinations = {}
-    # TODO: Needs extra useless param. on Windows? (one less on Linux)
-    for network, netmask, _, interface, address in scapy.config.conf.route.routes:
-        # Skip lo and default gateway
-        if network == 0 or interface == 'lo' or address == '127.0.0.1' or address == '0.0.0.0':
-            continue
-        if netmask <= 0 or netmask == 0xFFFFFFFF:
-            continue
-        net = to_cidr(network, netmask)
-        if net:
-            scan_and_print_neighbors(net, interface, combinations)
-    return combinations
+    try:
+        for network, netmask, _, interface, address in scapy.config.conf.route.routes:
+            # Skip lo and default gateway
+            if network == 0 or interface == 'lo' or address == '127.0.0.1' or address == '0.0.0.0':
+                continue
+            if netmask <= 0 or netmask == 0xFFFFFFFF:
+                continue
+            net = to_cidr(network, netmask)
+            if net:
+                scan_and_print_neighbors(net, interface, combinations)
+        return combinations
+    except ValueError:
+        for network, netmask, _, interface, address, _ in scapy.config.conf.route.routes:
+            # Skip lo and default gateway
+            if network == 0 or interface == 'lo' or address == '127.0.0.1' or address == '0.0.0.0':
+                continue
+            if netmask <= 0 or netmask == 0xFFFFFFFF:
+                continue
+            net = to_cidr(network, netmask)
+            if net:
+                scan_and_print_neighbors(net, interface, combinations)
+        return combinations
 
 
 def set_dns_settings(vic, tar):
-    global auth_dns, rec_dns
-
-    auth_dns = vic[0]
-    rec_dns = vic[1]
+    global victims, targets
+    victims = vic
+    targets = tar
 
 
 def get_dns_settings():
-    return auth_dns, rec_dns
+    return victims, targets

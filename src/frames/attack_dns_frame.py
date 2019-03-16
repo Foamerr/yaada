@@ -43,16 +43,19 @@ class AttackDNSFrame(tk.Frame):
 
         # INPUT #
         self.label_intro = tk.Label(self.labelframe_in,
-                                    text="The DNS cache poisoning attack will be performed on the first two victims "
-                                         "from the ARP Poisoning attack. To clarify, the first victim will act as "
-                                         "the Auth. DNS server, whereas the second victim will act as the DNS NS. "
-                                         "Furthermore, the target has to be your IP as you will not see the DNS "
-                                         "traffic otherwise.",
+                                    text="The DNS cache poisoning attack will be performed on victims "
+                                         "from the ARP Poisoning attack. Please write down the IP address of the "
+                                         "DNS name server below.",
                                     wraplength=450,
                                     justify=tk.LEFT,
                                     font=(self.controller.font, self.controller.font_size))
         self.label_intro.config(bg='#DADADA', fg='black')
         self.label_intro.pack(side='top', pady=5)
+
+        self.textbox_ns = tk.Entry(self.labelframe_in,
+                                   width=53,
+                                   font=(self.controller.font, self.controller.font_size))
+        self.textbox_ns.pack(side='top', padx=10, pady=5)
 
         self.label_domain = tk.Label(self.labelframe_in,
                                      text="Target domain (e.g., www.realsite.com)",
@@ -161,20 +164,29 @@ class AttackDNSFrame(tk.Frame):
         fake_domain_text = self.label_fake_domain.cget('text')
         domain_text = self.label_domain.cget('text')
 
-        if (fake_domain_text != 'Fake IP: None') and (domain_text != 'Target domain: None'):
+        if (fake_domain_text != 'Fake IP: None') and (domain_text != 'Target domain: None') and self.textbox_ns.get():
             self.button_start.config(state=tk.NORMAL)
             self.log.update_out('Both victim(s) and domain(s) set have been set')
             self.log.update_out('Ready for action!')
 
     def start_dns(self):
         """ Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target """
+        victims, target = dis.get_dns_settings()
+        if self.textbox_ns.get() not in victims:
+            messagebox.showerror("Error", "It seems like the DNS name server you set is not in the "
+                                          "list of victims you used ARP poisoning on.")
+            return
+
+        for vic in victims:
+            if self.textbox_ns.get() == vic:
+                self.rec_dns = vic
+            else:
+                self.auth_dns = vic
+
         self.button_stop.config(state=tk.NORMAL)
         self.button_start.config(state=tk.DISABLED)
 
         self.controller.log.update_out('Starting DNS spoofing')
-
-        # TODO: Doesn't work when NS is above Auth. IP...
-        self.auth_dns, self.rec_dns = dis.get_dns_settings()
 
         self.dns = DnsPois()
         self.dns.set(self.auth_dns, self.rec_dns, self.fake_domain, self.domain)

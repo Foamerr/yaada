@@ -22,7 +22,9 @@ class AttackARPFrame(tk.Frame):
         self.font = "Georgia"
         self.font_size = 11
         self.arp = None
+        self.is_poisoning = False
         self.log = self.controller.log
+        self.attacker_ip = None
 
         # FRAMES SETUP #
         top_frame = tk.Frame(self)
@@ -165,9 +167,12 @@ class AttackARPFrame(tk.Frame):
         self.log.update_out('Searching for local network addresses')
 
         combinations = dis.scan_local_network()
-        local_ip = dis.get_local_host_ip()
-        local_mac = dis.mac_for_ip(dis.get_local_host_ip())
-        self.ip_box.insert(tk.END, local_ip + ' at ' + local_mac + ' (self)')
+        if combinations is None:
+            messagebox.showerror("Error", "Something went wrong with scanning the network.")
+
+        self.attacker_ip = dis.get_local_host_ip()
+        local_mac = dis.mac_for_ip(self.attacker_ip)
+        self.ip_box.insert(tk.END, self.attacker_ip + ' at ' + local_mac + ' (self)')
 
         if combinations:
             for ip in combinations:
@@ -230,7 +235,7 @@ class AttackARPFrame(tk.Frame):
         victim_text = self.label_victim.cget('text')
         target_text = self.label_target.cget('text')
 
-        if (victim_text != 'Victims: None') and (target_text != 'Target: None'):
+        if (victim_text != 'Victims: None') and (target_text != 'Target: None') and not self.is_poisoning:
             self.button_start.config(state=tk.NORMAL)
             self.log.update_out('Both victim and target set have been set.')
             self.log.update_out('Ready for action!')
@@ -243,6 +248,7 @@ class AttackARPFrame(tk.Frame):
         else:
             self.button_stop.config(state=tk.NORMAL)
             self.button_start.config(state=tk.DISABLED)
+            self.is_poisoning = True
 
             self.target = str(self.target).split(' ', 1)[0]
 
@@ -262,13 +268,15 @@ class AttackARPFrame(tk.Frame):
             self.log.update_out('Victim: ' + ', '.join(self.victims))
             self.log.update_out('Target: ' + self.target)
             self.log.update_out('--------------------------------------------------------------------------')
-            self.log.update_out('It is now possible to execute a DNS cache poisoning attack.')
 
             self.log.update_stat('ARP Poisoning is active. See above logs for details.')
 
-            self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
-
-            dis.set_dns_settings(self.victims, self.target)
+            # only possible to execute dns cache poisoning if two victims are used and the target mac address is
+            # the mac address of the attacker
+            if len(self.victims) == 2 and self.target == self.attacker_ip:
+                self.log.update_out('It is now possible to execute a DNS cache poisoning attack.')
+                self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
+                dis.set_dns_settings(self.victims, self.target)
 
             return
 
@@ -280,6 +288,7 @@ class AttackARPFrame(tk.Frame):
 
         self.arp.stop_poisoning()
 
+        self.is_poisoning = False
         self.label_victim.config(text="Victims: None")
         self.label_target.config(text="Target: None")
 
