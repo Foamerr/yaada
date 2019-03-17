@@ -1,6 +1,7 @@
 import tkinter as tk
 import urllib
 from tkinter import messagebox
+import dns.resolver
 
 import discovery as dis
 from attacks.dns_attack import DnsPois
@@ -44,18 +45,12 @@ class AttackDNSFrame(tk.Frame):
         # INPUT #
         self.label_intro = tk.Label(self.labelframe_in,
                                     text="The DNS cache poisoning attack will be performed on victims "
-                                         "from the ARP Poisoning attack. Please write down the IP address of the "
-                                         "DNS name server below.",
+                                         "from the ARP Poisoning attack.",
                                     wraplength=450,
                                     justify=tk.LEFT,
                                     font=(self.controller.font, self.controller.font_size))
         self.label_intro.config(bg='#DADADA', fg='black')
         self.label_intro.pack(side='top', pady=5)
-
-        self.textbox_ns = tk.Entry(self.labelframe_in,
-                                   width=53,
-                                   font=(self.controller.font, self.controller.font_size))
-        self.textbox_ns.pack(side='top', padx=10, pady=5)
 
         self.label_domain = tk.Label(self.labelframe_in,
                                      text="Target domain (e.g., www.realsite.com)",
@@ -78,6 +73,7 @@ class AttackDNSFrame(tk.Frame):
 
         self.label_domain_fake = tk.Label(self.labelframe_in,
                                           text="Fake IP (the IP the victim will visit when trying to visit the domain above)",
+                                          wraplength=450,
                                           font=(self.controller.font, self.controller.font_size))
         self.label_domain_fake.config(bg='#DADADA', fg='black')
         self.label_domain_fake.pack(side='top', pady=10)
@@ -144,13 +140,19 @@ class AttackDNSFrame(tk.Frame):
     def set_domain(self):
         """ Sets the domain """
         self.domain = self.textbox_domain.get()
+        self.domain = self.domain.split('www.', 1)[1]
 
-        # if self.check_url(self.domain):
+        try:
+            self.auth_dns = dis.get_authoritative_nameserver(self.domain)
+        except:
+            messagebox.showerror("Error", "We could not obtain the authoritative DNS server for {0}.\n\n"
+                                          "See if you can reach this domain with your internet connection. If not,"
+                                          "then this could be the reason.".format(self.domain))
+            return
+
         self.log.update_out(self.domain + ' has been set as the target domain')
         self.label_domain.config(text=('Target domain: ' + self.domain))
         self.enable_start()
-        # else:
-        #    messagebox.showerror("Error", "Please make sure the domain has been correctly formatted.")
 
     def set_fake_domain(self):
         """ Sets the domain """
@@ -164,24 +166,25 @@ class AttackDNSFrame(tk.Frame):
         fake_domain_text = self.label_fake_domain.cget('text')
         domain_text = self.label_domain.cget('text')
 
-        if (fake_domain_text != 'Fake IP: None') and (domain_text != 'Target domain: None') and self.textbox_ns.get():
+        if (fake_domain_text != 'Fake IP: None') and (domain_text != 'Target domain: None'):
             self.button_start.config(state=tk.NORMAL)
             self.log.update_out('Both victim(s) and domain(s) set have been set')
             self.log.update_out('Ready for action!')
 
     def start_dns(self):
         """ Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target """
-        victims, target = dis.get_dns_settings()
-        if self.textbox_ns.get() not in victims:
-            messagebox.showerror("Error", "It seems like the DNS name server you set is not in the "
-                                          "list of victims you used ARP poisoning on.")
-            return
+        victims, self.rec_dns = dis.get_dns_settings()
 
-        for vic in victims:
-            if self.textbox_ns.get() == vic:
-                self.rec_dns = vic
-            else:
-                self.auth_dns = vic
+        print(self.rec_dns)
+        print(self.domain)
+        print(self.auth_dns)
+
+        if self.auth_dns not in victims:
+            messagebox.showerror("Error", "The authoritative DNS server for that domain ({0}) is currently not a victim.\n\n"
+                                          "There is currently no ARP cache poisoning between the authoritative DNS server and the "
+                                          "DNS nameserver. This means we cannot perform a DNS cache poisoning attack.\n\n"
+                                          "Please execute the ARP poisoning attack again with the DNS nameserver and authoritative server as victims.".format(self.auth_dns))
+            return
 
         self.button_stop.config(state=tk.NORMAL)
         self.button_start.config(state=tk.DISABLED)

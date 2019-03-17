@@ -6,6 +6,10 @@ import scapy.config
 import scapy.layers.l2
 import scapy.route
 from scapy.all import *
+import dns
+import dns.name
+import dns.query
+import dns.resolver
 from scapy.layers.l2 import Ether, ARP
 
 
@@ -87,6 +91,7 @@ def to_cidr(network_bytes, netmask_bytes):
 
 
 def scan_and_print_neighbors(net, interface, combinations, timeout=0.01):
+    """ Puts all MAC-IP address combinations in dictionary @combination for a certain interface """
     try:
         ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=False)
         for s, r in ans.res:
@@ -98,6 +103,8 @@ def scan_and_print_neighbors(net, interface, combinations, timeout=0.01):
 
 
 def scan_local_network():
+    """ Scans the local network using all network interfaces and returns a dictionary that maps
+        MAC addresses to IP address """
     combinations = {}
     try:
         for network, netmask, _, interface, address in scapy.config.conf.route.routes:
@@ -123,11 +130,41 @@ def scan_local_network():
         return combinations
 
 
-def set_dns_settings(vic, tar):
-    global victims, targets
+def set_dns_settings(vic, dns_ns):
+    """ Sets the victims and targets for DNS purposes """
+    global victims, nameserver
     victims = vic
-    targets = tar
+    nameserver = dns_ns
 
 
 def get_dns_settings():
-    return victims, targets
+    return victims, nameserver
+
+
+def get_authoritative_nameserver(domain):
+    n = dns.name.from_text(domain)
+    default = dns.resolver.get_default_resolver()
+    nameserver = default.nameservers[0]
+
+    query = dns.message.make_query(n, dns.rdatatype.NS)
+    response = dns.query.udp(query, nameserver)
+
+    rcode = response.rcode()
+    if rcode != dns.rcode.NOERROR:
+        if rcode == dns.rcode.NXDOMAIN:
+            raise Exception('%s does not exist.' % n)
+        else:
+            raise Exception('Error %s' % dns.rcode.to_text(rcode))
+
+    rrset = None
+    if len(response.authority) > 0:
+        rrset = response.authority[0]
+    else:
+        rrset = response.answer[0]
+
+    rr = rrset[0]
+    if not rr.rdtype == dns.rdatatype.SOA:
+        authority = rr.target
+        nameserver = default.query(authority).rrset[0].to_text()
+
+    return nameserver

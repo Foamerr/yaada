@@ -1,11 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
+import dns.resolver
 
 import discovery as dis
 from attacks.arp_attack import ArpPois
 
-from frames.attack_dns_frame import *
-import attack_dns_frame
+try:
+    from frames.attack_dns_frame import *
+except ImportError:
+    import attack_dns_frame
 
 
 class AttackARPFrame(tk.Frame):
@@ -25,6 +28,7 @@ class AttackARPFrame(tk.Frame):
         self.is_poisoning = False
         self.log = self.controller.log
         self.attacker_ip = None
+        self.ns = None
 
         # FRAMES SETUP #
         top_frame = tk.Frame(self)
@@ -137,7 +141,7 @@ class AttackARPFrame(tk.Frame):
         self.button_stop.config(state=tk.DISABLED)
 
         self.label_time = tk.Label(below_buttons_frame,
-                                   text="Please enter a time interval to send packets\n(default is every 5 seconds)",
+                                   text="Please enter a time interval to send packets\n(default is every 10 seconds)",
                                    font=(self.controller.font, self.controller.font_size))
         self.label_time.config(bg='#DADADA', fg='black')
         self.label_time.pack(side='top', pady=5)
@@ -146,17 +150,18 @@ class AttackARPFrame(tk.Frame):
         self.max_value.trace('w', self.limit_size)
 
         self.textbox_time = tk.Entry(below_buttons_frame,
-                                     width=1,
+                                     width=2,
+                                     justify=tk.CENTER,
                                      textvariable=self.max_value,
                                      font=(self.controller.font, self.controller.font_size))
         self.textbox_time.pack(side='top', padx=10, pady=5)
 
-        self.textbox_time.insert(tk.END, 5)
+        self.textbox_time.insert(tk.END, 10)
 
     def limit_size(self, *args):
         value = self.max_value.get()
-        if len(value) > 1:
-            self.max_value.set(value[:1])
+        if len(value) > 2:
+            self.max_value.set(value[:2])
 
     def update_local(self):
         """ Scan the network and store all found IP/MAC combinations in a listbox """
@@ -165,6 +170,12 @@ class AttackARPFrame(tk.Frame):
         self.ip_box.delete(0, tk.END)
         self.log.update_stat('Searching for local network addresses')
         self.log.update_out('Searching for local network addresses')
+
+        try:
+            default = dns.resolver.get_default_resolver()
+            self.ns = default.nameservers[0]
+        except:
+            pass
 
         combinations = dis.scan_local_network()
         if combinations is None:
@@ -177,10 +188,10 @@ class AttackARPFrame(tk.Frame):
         if combinations:
             for ip in combinations:
                 print(ip)
-                # if dis.get_default_gateway() == ip:
-                #     self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (gateway)')
-                # else:
-                self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
+                if ip == self.ns:
+                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (DNS NS)')
+                else:
+                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
         else:
             self.ip_box.insert(tk.END, 'Could not find any other IP addresses')
 
@@ -274,9 +285,11 @@ class AttackARPFrame(tk.Frame):
             # only possible to execute dns cache poisoning if two victims are used and the target mac address is
             # the mac address of the attacker
             if len(self.victims) == 2 and self.target == self.attacker_ip:
-                self.log.update_out('It is now possible to execute a DNS cache poisoning attack.')
-                self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
-                dis.set_dns_settings(self.victims, self.target)
+                for vic in self.victims:
+                    if vic == self.ns:
+                        self.log.update_out('It is now possible to execute a DNS cache poisoning attack.')
+                        self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
+                        dis.set_dns_settings(self.victims, self.ns)
 
             return
 
