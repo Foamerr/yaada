@@ -17,8 +17,8 @@ class InitialFrame(tk.Frame):
         # GUI COMPONENTS #
         about_desc = "YAADA is a tool that provides an easy way to easily execute ARP " \
                      "poisoning and DNS cache poisoning attacks on a selected list of victims " \
-                     "with a target and a domain with a fake domain for ARP poisoning and DNS cache poisoning respectively." \
-                     "\nSee the documentation on the `Help' tab for a more detailed description of the tool." \
+                     "with a target. Here, a DNS cache poisoning attack also considers a target domain and fake IP." \
+                     "See the documentation on the `Help' tab for a more detailed description of the tool." \
                      "\n\nThe `Home' tab provides a general description of the tool and explains " \
                      "the various tabs. \n\nThe `ARP Poisoning' tab provides a way to " \
                      "execute an ARP poisoning attack on a list of victims and a specified " \

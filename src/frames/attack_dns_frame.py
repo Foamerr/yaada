@@ -215,7 +215,7 @@ class AttackDNSFrame(tk.Frame):
 
     def stop_dns(self):
         """ Stops all DNS spoofing attack """
-        self.button_start.config(state=tk.NORMAL)
+        # self.button_start.config(state=tk.NORMAL)
         self.button_stop.config(state=tk.DISABLED)
         self.textbox_domain_fake.delete(0, tk.END)
         self.textbox_domain.delete(0, tk.END)
