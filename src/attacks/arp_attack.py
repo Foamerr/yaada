@@ -38,7 +38,6 @@ class ArpPois:
         send(ARP(op=2, pdst=ip2, psrc=ip, hwdst=mac2, hwsrc=mac), count=3)
 
     def run(self):
-
         try:
             with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
                 ipf.write('1\n')
@@ -61,7 +60,6 @@ class ArpPois:
 
     def stop_poisoning(self):
         self.stop = True
-        self.thread.join()
 
         try:
             with open('/proc/sys/net/ipv4/ip_forward', 'w') as ipf:
@@ -69,10 +67,7 @@ class ArpPois:
         except FileNotFoundError:
             pass
 
-        # TODO: Use a thread to stop for user convenience
         self.stop_thread = threading.Thread(target=self.restore_network)
-        self.stop_thread.start()
-        self.stop_thread.join()
 
     def restore_network(self):
         for ip, mac in zip(self.victims_ip, self.victims_mac):

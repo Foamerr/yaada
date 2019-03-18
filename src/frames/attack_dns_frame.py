@@ -140,7 +140,11 @@ class AttackDNSFrame(tk.Frame):
     def set_domain(self):
         """ Sets the domain """
         self.domain = self.textbox_domain.get()
-        self.domain = self.domain.split('www.', 1)[1]
+        try:
+            self.domain = self.domain.split('www.', 1)[1]
+        except:
+            messagebox.showerror("Error", "Please check the format of your provided domain and correct it.".format(self.domain))
+            return
 
         try:
             self.auth_dns = dis.get_authoritative_nameserver(self.domain)
@@ -174,6 +178,11 @@ class AttackDNSFrame(tk.Frame):
     def start_dns(self):
         """ Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target """
         victims, self.rec_dns = dis.get_dns_settings()
+
+        if self.auth_dns is None or self.rec_dns is None or self.domain is None:
+            messagebox.showerror(
+                "Error", "Make sure you fill in all the required information above.")
+            return
 
         print(self.rec_dns)
         print(self.domain)
@@ -213,6 +222,11 @@ class AttackDNSFrame(tk.Frame):
 
         self.label_fake_domain.config(text="Fake IP: None")
         self.label_domain.config(text="Target domain: None")
+
+        self.domain = None
+        self.fake_domain = None
+        self.auth_dns = None
+        self.rec_dns = None
 
         self.controller.log.update_out('DNS spoofing stopped')
         self.controller.log.update_stat("Stopped DNS spoofing")
