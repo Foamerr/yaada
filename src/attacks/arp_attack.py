@@ -34,8 +34,8 @@ class ArpPois:
 
     @staticmethod
     def restore(ip2, ip, mac2, mac):
-        send(ARP(op=2, pdst=ip, psrc=ip2, hwdst=mac, hwsrc=mac2), count=3)
-        send(ARP(op=2, pdst=ip2, psrc=ip, hwdst=mac2, hwsrc=mac), count=3)
+        send(ARP(op=2, pdst=ip, psrc=ip2, hwdst=mac, hwsrc=mac2), count=1)
+        send(ARP(op=2, pdst=ip2, psrc=ip, hwdst=mac2, hwsrc=mac), count=1)
 
     def run(self):
         try:
