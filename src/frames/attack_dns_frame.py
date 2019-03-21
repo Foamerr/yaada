@@ -220,6 +220,8 @@ class AttackDNSFrame(tk.Frame):
         self.textbox_domain_fake.delete(0, tk.END)
         self.textbox_domain.delete(0, tk.END)
 
+        self.dns.stop_poisoning()
+
         self.label_fake_domain.config(text="Fake IP: None")
         self.label_domain.config(text="Target domain: None")
 
@@ -229,7 +231,12 @@ class AttackDNSFrame(tk.Frame):
         self.rec_dns = None
 
         self.controller.log.update_out('DNS spoofing stopped')
-        self.controller.log.update_stat("Stopped DNS spoofing")
+        self.controller.log.update_stat('Stopped DNS spoofing')
+
+        messagebox.showinfo("Saved trafic", "You can observe the saved traffic under the `pcap_files' folder. This "
+                                            "file can be opened with Wireshark. Here, one can observe the traffic "
+                                            "that was involved during the ARP poisoning and"
+                                            "DNS cache poisoning attack.")
 
     @staticmethod
     def dis_err(case):

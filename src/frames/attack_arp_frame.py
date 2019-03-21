@@ -293,6 +293,10 @@ class AttackARPFrame(tk.Frame):
         if len(self.victims) == 2 and self.target == self.attacker_ip:
             for vic in self.victims:
                 if vic == self.ns:
+                    messagebox.showinfo("Possible DNS cache poisoning attack",
+                                        "It is now possible to execute a DNS cache poisoning attack."
+                                        "Please navigate to the `DNS cache poisoning' tab to execute this attack."
+                                        "\n\nSee the log below for more information on the victims and the target.")
                     self.log.update_out('It is now possible to execute')
                     self.log.update_out('a DNS cache poisoning attack.')
                     self.controller.notebook.tab('.!mainapplication.!notebook.!attackdnsframe', state="normal")

