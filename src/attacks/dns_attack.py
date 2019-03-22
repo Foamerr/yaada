@@ -17,6 +17,7 @@ class DnsPois:
         self.thread = None
         self.stop_thread = None
         self.stop = False
+        self.save = False
 
     @staticmethod
     def responder(auth_ip, rec_ip, mal_ip, domain):
@@ -52,11 +53,12 @@ class DnsPois:
         # TODO: this does not work
         return get_resp
 
-    def set(self, auth_dns, rec_dns, mal_dns, dom):
+    def set(self, auth_dns, rec_dns, mal_dns, dom, save):
         self.domain = dom
         self.auth_ip = auth_dns
         self.rec_ip = rec_dns
         self.mal_ip = mal_dns
+        self.save = save
 
     def start(self):
         print("domain: " + self.domain)
@@ -81,8 +83,9 @@ class DnsPois:
     def sniff(self):
         packets = sniff(store=True, prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain),
                         stop_filter=self.stopfilter)
-        name = str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap'
-        wrpcap('../pcap_files/' + name, packets)
+        if self.save:
+            name = str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap'
+            wrpcap('../pcap_files/' + name, packets)
 
     def stop_poisoning(self):
         self.stop = True

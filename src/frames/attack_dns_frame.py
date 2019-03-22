@@ -23,6 +23,7 @@ class AttackDNSFrame(tk.Frame):
         self.auth_dns = None
         self.rec_dns = None
         self.log = self.controller.log
+        self.save_traffic = False
 
         # FRAMES SETUP #
         top_frame = tk.Frame(self)
@@ -137,6 +138,15 @@ class AttackDNSFrame(tk.Frame):
         self.button_stop.place(relx=0.70, rely=0.5, anchor=tk.CENTER)
         self.button_stop.config(state=tk.DISABLED)
 
+        self.ck = tk.StringVar()
+        self.ck.set("0")
+        self.save = tk.Checkbutton(self.labelframe_in,
+                                   text="Save traffic",
+                                   font=(self.controller.font, self.controller.font_size),
+                                   variable=self.ck)
+        self.save.config(bg='#DADADA', fg='black')
+        self.save.pack(side='top', pady=5)
+
     def set_domain(self):
         """ Sets the domain """
         self.domain = self.textbox_domain.get()
@@ -179,6 +189,9 @@ class AttackDNSFrame(tk.Frame):
         """ Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target """
         victims, self.rec_dns = dis.get_dns_settings()
 
+        if self.ck.get() is not "0":
+            self.save_traffic = True
+
         if self.auth_dns is None or self.rec_dns is None or self.domain is None:
             messagebox.showerror(
                 "Error", "Make sure you fill in all the required information above.")
@@ -201,7 +214,7 @@ class AttackDNSFrame(tk.Frame):
         self.controller.log.update_out('Starting DNS spoofing')
 
         self.dns = DnsPois()
-        self.dns.set(self.auth_dns, self.rec_dns, self.fake_domain, self.domain)
+        self.dns.set(self.auth_dns, self.rec_dns, self.fake_domain, self.domain, self.save_traffic)
         self.dns.start()
 
         self.controller.log.update_stat('DNS spoofing is active')

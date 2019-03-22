@@ -158,6 +158,15 @@ class AttackARPFrame(tk.Frame):
 
         self.textbox_time.insert(tk.END, 10)
 
+        self.ck = tk.StringVar()
+        self.ck.set("0")
+        self.save = tk.Checkbutton(below_buttons_frame,
+                                   text="Detailed host display (takes longer)",
+                                   font=(self.controller.font, self.controller.font_size),
+                                   variable=self.ck)
+        self.save.config(bg='#DADADA', fg='black')
+        self.save.pack(side='top', pady=5)
+
     def limit_size(self, *args):
         value = self.max_value.get()
         if len(value) > 3:
@@ -177,7 +186,15 @@ class AttackARPFrame(tk.Frame):
         except:
             pass
 
-        combinations = dis.scan_local_network()
+        detailed = False
+        if self.ck.get() == "1":
+            detailed = True
+
+        if detailed:
+            combinations, hostnames = dis.scan_local_network(detailed=detailed)
+        else:
+            combinations = dis.scan_local_network(detailed=detailed)
+
         if combinations is None:
             messagebox.showerror("Error", "Something went wrong with scanning the network.")
 
@@ -185,13 +202,24 @@ class AttackARPFrame(tk.Frame):
         local_mac = dis.mac_for_ip(self.attacker_ip)
         self.ip_box.insert(tk.END, self.attacker_ip + ' at ' + local_mac + ' (self)')
 
+        count = 0
         if combinations:
             for ip in combinations:
                 print(ip)
                 if ip == self.ns:
-                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (DNS NS)')
+                    if detailed:
+                        self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (DNS NS - ' + hostnames[count] + ')')
+                        count = count + 1
+                    else:
+                        self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (DNS NS)')
+                        count = count + 1
                 else:
-                    self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
+                    if detailed:
+                        self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (' + hostnames[count] + ')')
+                        count = count + 1
+                    else:
+                        self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip])
+                        count = count + 1
         else:
             self.ip_box.insert(tk.END, 'Could not find any other IP addresses')
 

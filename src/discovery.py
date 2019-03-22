@@ -102,10 +102,28 @@ def scan_and_print_neighbors(net, interface, combinations, timeout=0.01):
         raise
 
 
-def scan_local_network():
+def scan_and_print_detailed(net, interface, combinations, hostnames, timeout=0.01):
+    try:
+        ans, unans = scapy.layers.l2.arping(net, iface=interface, timeout=timeout, verbose=True)
+        for s, r in ans.res:
+            mac = r.sprintf("%Ether.src%")
+            ip = r.sprintf("%ARP.psrc%")
+            combinations[ip] = mac
+            try:
+                hostname = socket.gethostbyaddr(r.psrc)
+                hostnames.append(hostname[0])
+            except socket.herror:
+                pass
+    except socket.error as e:
+        raise
+
+
+def scan_local_network(detailed=False):
     """ Scans the local network using all network interfaces and returns a dictionary that maps
         MAC addresses to IP address """
     combinations = {}
+    hostnames = []
+
     try:
         for network, netmask, _, interface, address in scapy.config.conf.route.routes:
             # Skip lo and default gateway
@@ -115,8 +133,14 @@ def scan_local_network():
                 continue
             net = to_cidr(network, netmask)
             if net:
-                scan_and_print_neighbors(net, interface, combinations)
-        return combinations
+                if not detailed:
+                    scan_and_print_neighbors(net, interface, combinations)
+                else:
+                    scan_and_print_detailed(net, interface, combinations, hostnames)
+        if detailed:
+            return combinations, hostnames
+        else:
+            return combinations
     except ValueError:
         for network, netmask, _, interface, address, _ in scapy.config.conf.route.routes:
             # Skip lo and default gateway
@@ -126,8 +150,14 @@ def scan_local_network():
                 continue
             net = to_cidr(network, netmask)
             if net:
-                scan_and_print_neighbors(net, interface, combinations)
-        return combinations
+                if not detailed:
+                    scan_and_print_neighbors(net, interface, combinations)
+                else:
+                    scan_and_print_detailed(net, interface, combinations, hostnames)
+        if detailed:
+            return combinations, hostnames
+        else:
+            return combinations
 
 
 def set_dns_settings(vic, dns_ns):
