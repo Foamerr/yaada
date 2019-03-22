@@ -150,7 +150,7 @@ class AttackARPFrame(tk.Frame):
         self.max_value.trace('w', self.limit_size)
 
         self.textbox_time = tk.Entry(below_buttons_frame,
-                                     width=2,
+                                     width=3,
                                      justify=tk.CENTER,
                                      textvariable=self.max_value,
                                      font=(self.controller.font, self.controller.font_size))
@@ -160,8 +160,8 @@ class AttackARPFrame(tk.Frame):
 
     def limit_size(self, *args):
         value = self.max_value.get()
-        if len(value) > 2:
-            self.max_value.set(value[:2])
+        if len(value) > 3:
+            self.max_value.set(value[:3])
 
     def update_local(self):
         """ Scan the network and store all found IP/MAC combinations in a listbox """
@@ -295,7 +295,7 @@ class AttackARPFrame(tk.Frame):
                 if vic == self.ns:
                     messagebox.showinfo("Possible DNS cache poisoning attack",
                                         "It is now possible to execute a DNS cache poisoning attack."
-                                        "Please navigate to the `DNS cache poisoning' tab to execute this attack."
+                                        " Please navigate to the `DNS cache poisoning' tab to execute this attack."
                                         "\n\nSee the log below for more information on the victims and the target.")
                     self.log.update_out('It is now possible to execute')
                     self.log.update_out('a DNS cache poisoning attack.')

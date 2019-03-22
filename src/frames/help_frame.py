@@ -40,9 +40,9 @@ class HelpFrame(tk.Frame):
     @staticmethod
     def dis_about():
         """ Displays a message box containing the `about' section information """
-        messagebox.showinfo("About", "YAADA is a tool for ARP and DNS spoofing \n"
-                                     "with different modalities that automatically \n"
-                                     "poisons ARP caches and uses DNS queries to \n"
+        messagebox.showinfo("About", "YAADA is a tool for ARP and DNS cache poisoning "
+                                     "with different modalities that automatically "
+                                     "poisons ARP caches and uses DNS queries to "
                                      "poison recursive DNS cache. \n"
                                      "Created by Stijn Derks and Nick van de Waterlaat")
 
