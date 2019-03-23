@@ -1,3 +1,5 @@
+import subprocess
+import sys
 import tkinter as tk
 import webbrowser
 from tkinter import messagebox
@@ -55,5 +57,6 @@ class HelpFrame(tk.Frame):
         """
         Opens documentation PDF file in default browser
         """
-        file = r'..\resources\documentation.pdf'
+        file = '../resources/documentation.pdf'
+
         webbrowser.open_new(file)

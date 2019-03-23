@@ -98,6 +98,6 @@ class MainApplication(tk.Frame):
 
 if __name__ == '__main__':
     root = tk.Tk()
-    root.iconbitmap(r'..\resources\logo.ico')
+    # root.iconbitmap(r'..\resources\logo.ico')
     MainApplication(root).pack(side="top", fill="both", expand=True)
     root.mainloop()
