@@ -2,7 +2,9 @@ import socket
 
 
 def are_valid_address(addresses):
-    """ Returns whether or not a list of addresses contains only valid IPv4 or IPv6 addresses """
+    """
+    Returns whether or not a list of addresses contains only valid IPv4 or IPv6 addresses
+    """
     for address in addresses:
         if not (is_ipv6_address(address) or is_ipv4_address(address)):
             return False

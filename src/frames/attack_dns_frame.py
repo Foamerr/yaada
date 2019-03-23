@@ -1,7 +1,6 @@
 import tkinter as tk
 import urllib
 from tkinter import messagebox
-import dns.resolver
 
 import discovery as dis
 from attacks.dns_attack import DnsPois
@@ -10,7 +9,9 @@ from attacks.dns_attack import DnsPois
 class AttackDNSFrame(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ Initialises GUI of the frame used for selecting the target """
+        """
+        Initialises GUI of the frame used for selecting the target
+        """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
@@ -150,10 +151,12 @@ class AttackDNSFrame(tk.Frame):
     def set_domain(self):
         """ Sets the domain """
         self.domain = self.textbox_domain.get()
+        # error handling
         try:
             self.domain = self.domain.split('www.', 1)[1]
         except:
-            messagebox.showerror("Error", "Please check the format of your provided domain and correct it.".format(self.domain))
+            messagebox.showerror("Error",
+                                 "Please check the format of your provided domain and correct it.".format(self.domain))
             return
 
         try:
@@ -169,14 +172,18 @@ class AttackDNSFrame(tk.Frame):
         self.enable_start()
 
     def set_fake_domain(self):
-        """ Sets the domain """
+        """
+        Sets the domain
+        """
         self.fake_domain = self.textbox_domain_fake.get()
         self.log.update_out(self.fake_domain + ' has been set as the fake ip')
         self.label_fake_domain.config(text=('Fake IP: ' + self.fake_domain))
         self.enable_start()
 
     def enable_start(self):
-        """ Checks if the start button should be enabled """
+        """
+        Checks if the start button should be enabled
+        """
         fake_domain_text = self.label_fake_domain.cget('text')
         domain_text = self.label_domain.cget('text')
 
@@ -186,9 +193,12 @@ class AttackDNSFrame(tk.Frame):
             self.log.update_out('Ready for action!')
 
     def start_dns(self):
-        """ Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target """
+        """
+        Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target
+        """
         victims, self.rec_dns = dis.get_dns_settings()
 
+        # deal with saving the traffic in a pcap file
         if self.ck.get() is not "0":
             self.save_traffic = True
 
@@ -202,10 +212,12 @@ class AttackDNSFrame(tk.Frame):
         print(self.auth_dns)
 
         if self.auth_dns not in victims:
-            messagebox.showerror("Error", "The authoritative DNS server for that domain ({0}) is currently not a victim.\n\n"
-                                          "There is currently no ARP cache poisoning between the authoritative DNS server and the "
-                                          "DNS nameserver. This means we cannot perform a DNS cache poisoning attack.\n\n"
-                                          "Please execute the ARP poisoning attack again with the DNS nameserver and authoritative server as victims.".format(self.auth_dns))
+            messagebox.showerror("Error",
+                                 "The authoritative DNS server for that domain ({0}) is currently not a victim.\n\n"
+                                 "There is currently no ARP cache poisoning between the authoritative DNS server and the "
+                                 "DNS nameserver. This means we cannot perform a DNS cache poisoning attack.\n\n"
+                                 "Please execute the ARP poisoning attack again with the DNS nameserver and authoritative server as victims.".format(
+                                     self.auth_dns))
             return
 
         self.button_stop.config(state=tk.NORMAL)
@@ -227,7 +239,9 @@ class AttackDNSFrame(tk.Frame):
         self.log.update_out('--------------------------------------------------------------------------')
 
     def stop_dns(self):
-        """ Stops all DNS spoofing attack """
+        """
+        Stops all DNS spoofing attack
+        """
         # self.button_start.config(state=tk.NORMAL)
         self.button_stop.config(state=tk.DISABLED)
         self.textbox_domain_fake.delete(0, tk.END)

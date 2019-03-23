@@ -1,8 +1,7 @@
 import tkinter as tk
-from tkinter import messagebox
+
 import dns.resolver
 
-import discovery as dis
 from attacks.arp_attack import ArpPois
 
 try:
@@ -14,7 +13,9 @@ except ImportError:
 class AttackARPFrame(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ Initialises GUI of the frame used for selecting the target """
+        """
+        Initialises GUI of the frame used for selecting the target
+        """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
@@ -168,24 +169,34 @@ class AttackARPFrame(tk.Frame):
         self.save.pack(side='top', pady=5)
 
     def limit_size(self, *args):
+        """
+        Sets the maximum size of a text box
+
+        :param args:
+        :return:
+        """
         value = self.max_value.get()
         if len(value) > 3:
             self.max_value.set(value[:3])
 
     def update_local(self):
-        """ Scan the network and store all found IP/MAC combinations in a listbox """
+        """
+        Scan the network and store all found IP/MAC combinations in a listbox
+        """
         # interface = self.textbox_ip.get(self.textbox_ip.curselection())
 
         self.ip_box.delete(0, tk.END)
         self.log.update_stat('Searching for local network addresses')
         self.log.update_out('Searching for local network addresses')
 
+        # try to get the default nameserver
         try:
             default = dns.resolver.get_default_resolver()
             self.ns = default.nameservers[0]
         except:
             pass
 
+        # deal with either displaying or not displaying detailed information about hosts
         detailed = False
         if self.ck.get() == "1":
             detailed = True
@@ -198,10 +209,12 @@ class AttackARPFrame(tk.Frame):
         if combinations is None:
             messagebox.showerror("Error", "Something went wrong with scanning the network.")
 
+        # get own IP and mac
         self.attacker_ip = dis.get_local_host_ip()
         local_mac = dis.mac_for_ip(self.attacker_ip)
         self.ip_box.insert(tk.END, self.attacker_ip + ' at ' + local_mac + ' (self)')
 
+        # store all IPs in listbox
         count = 0
         if combinations:
             for ip in combinations:
@@ -227,7 +240,9 @@ class AttackARPFrame(tk.Frame):
         self.log.update_out('Finished searching for local network addresses')
 
     def set_target(self):
-        """ Sets the target (MAC/IP combination) """
+        """
+        Sets the target (MAC/IP combination)
+        """
         try:
             target = self.ip_box.get(self.ip_box.curselection())
             self.ip_box.select_clear(0, tk.END)
@@ -248,9 +263,11 @@ class AttackARPFrame(tk.Frame):
         """ Sets the victim(s) (MAC/IP combination(s)) """
         selection = self.ip_box.curselection()
 
+        # at least two victims
         if len(selection) >= 2:
             result = []
             result_mac = []
+            # for each victim
             for i in selection:
                 entry = self.ip_box.get(i)
                 ip = str(entry).split(' at ', 1)[0]
@@ -270,7 +287,9 @@ class AttackARPFrame(tk.Frame):
             self.dis_err('at least two victims')
 
     def enable_start(self):
-        """ Checks if the start button should be enabled """
+        """
+        Checks if the start button should be enabled
+        """
         victim_text = self.label_victim.cget('text')
         target_text = self.label_target.cget('text')
 
@@ -280,7 +299,10 @@ class AttackARPFrame(tk.Frame):
             self.log.update_out('Ready for action!')
 
     def start_arp(self):
-        """ Starts an ARP spoofing attack on all combinations between victim pairs with respect to the target """
+        """
+        Starts an ARP spoofing attack on all combinations between victim pairs with respect to the target
+        """
+        # error handling
         if self.target is None or self.victims is None:
             messagebox.showerror(
                 "Error", "You have to set a target and/or victims first.")
@@ -333,7 +355,9 @@ class AttackARPFrame(tk.Frame):
         return
 
     def stop_arp(self):
-        """ Stops all ARP spoofing attack """
+        """
+        Stops all ARP spoofing attack
+        """
         # self.button_start.config(state=tk.NORMAL)
         self.button_stop.config(state=tk.DISABLED)
         self.ip_box.delete(0, tk.END)

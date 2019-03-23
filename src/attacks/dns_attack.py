@@ -54,6 +54,16 @@ class DnsPois:
         return get_resp
 
     def set(self, auth_dns, rec_dns, mal_dns, dom, save):
+        """
+        Set all the information needed for a DNS cache poisoning attack
+
+        :param auth_dns:
+        :param rec_dns:
+        :param mal_dns:
+        :param dom:
+        :param save:
+        :return:
+        """
         self.domain = dom
         self.auth_ip = auth_dns
         self.rec_ip = rec_dns
@@ -61,6 +71,11 @@ class DnsPois:
         self.save = save
 
     def start(self):
+        """
+        Start the DNS cache poisoning attack
+
+        :return:
+        """
         print("domain: " + self.domain)
         print("auth server: " + self.auth_ip)
         print("NS: " + self.rec_ip)
@@ -81,6 +96,11 @@ class DnsPois:
         self.thread.start()
 
     def sniff(self):
+        """
+        Sniff the network with a stop_filter (@self.stopfilter)
+
+        :return:
+        """
         packets = sniff(store=True, prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain),
                         stop_filter=self.stopfilter)
         if self.save:
@@ -88,10 +108,21 @@ class DnsPois:
             wrpcap('../pcap_files/' + name, packets)
 
     def stop_poisoning(self):
+        """
+        Stop ARP cache poisoning
+
+        :return:
+        """
         self.stop = True
         # self.stop_thread = threading.Thread(target=self.restore_network)
 
     def stopfilter(self, x):
+        """
+        The stop filter
+
+        :param x: a packet
+        :return:
+        """
         if self.stop:
             return True
         else:

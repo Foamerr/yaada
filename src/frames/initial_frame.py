@@ -4,7 +4,9 @@ import tkinter as tk
 class InitialFrame(tk.Frame):
 
     def __init__(self, parent, controller):
-        """ Initialises GUI of the frame used for the initially showed tab """
+        """
+        Initialises GUI of the frame used for the initially showed tab
+        """
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg='#DADADA')
