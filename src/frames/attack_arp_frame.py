@@ -39,7 +39,7 @@ class AttackARPFrame(tk.Frame):
         self.labelframe_in.config(bg='#DADADA', fg='black')
         self.labelframe_in.pack(pady=15)
 
-        button_set_frame, below_buttons_frame, bottom_frame = tk.Frame(self.labelframe_in, height=55), \
+        button_set_frame, below_buttons_frame, bottom_frame = tk.Frame(self.labelframe_in, height=40), \
                                                               tk.Frame(self.labelframe_in), tk.Frame(self)
         button_start_frame = tk.Frame(bottom_frame)
 
@@ -59,6 +59,15 @@ class AttackARPFrame(tk.Frame):
                                  font=(self.controller.font, self.controller.font_size))
         self.label_ip.config(bg='#DADADA', fg='black')
         self.label_ip.pack(side='top', pady=5)
+
+        self.ck = tk.StringVar()
+        self.ck.set("0")
+        self.save = tk.Checkbutton(self.labelframe_in,
+                                   text="Detailed host display (takes longer)",
+                                   font=(self.controller.font, self.controller.font_size),
+                                   variable=self.ck)
+        self.save.config(bg='#DADADA', fg='black')
+        self.save.pack(side='top', pady=5)
 
         self.button_scan = tk.Button(self.labelframe_in,
                                      text="Scan",
@@ -158,15 +167,6 @@ class AttackARPFrame(tk.Frame):
         self.textbox_time.pack(side='top', padx=10, pady=5)
 
         self.textbox_time.insert(tk.END, 10)
-
-        self.ck = tk.StringVar()
-        self.ck.set("0")
-        self.save = tk.Checkbutton(below_buttons_frame,
-                                   text="Detailed host display (takes longer)",
-                                   font=(self.controller.font, self.controller.font_size),
-                                   variable=self.ck)
-        self.save.config(bg='#DADADA', fg='black')
-        self.save.pack(side='top', pady=5)
 
     def limit_size(self, *args):
         """
