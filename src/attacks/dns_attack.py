@@ -104,6 +104,7 @@ class DnsPois:
 
         :return:
         """
+        # TODO: Stop filter is not used so packet saving does not work
         packets = sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain))
         if self.save:
             name = str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap'
