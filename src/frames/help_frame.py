@@ -57,6 +57,6 @@ class HelpFrame(tk.Frame):
         """
         Opens documentation PDF file in default browser
         """
-        file = '../resources/documentation.pdf'
+        file = r'..\resources\documentation.pdf'
 
         webbrowser.open_new(file)

@@ -13,6 +13,7 @@ class AttackDNSFrame(tk.Frame):
         Initialises GUI of the frame used for selecting the target
         """
         tk.Frame.__init__(self, parent)
+        self.poison_vic = False
         self.controller = controller
         self.configure(bg='#DADADA')
         self.font = "Georgia"
@@ -148,6 +149,15 @@ class AttackDNSFrame(tk.Frame):
         self.save.config(bg='#DADADA', fg='black')
         self.save.pack(side='top', pady=5)
 
+        self.pois_vic = tk.StringVar()
+        self.pois_vic.set("0")
+        self.vic = tk.Checkbutton(self.labelframe_in,
+                                   text="Poison victim host instead of authoritative DNS server",
+                                   font=(self.controller.font, self.controller.font_size),
+                                   variable=self.pois_vic)
+        self.vic.config(bg='#DADADA', fg='black')
+        self.vic.pack(side='top', pady=5)
+
     def set_domain(self):
         """ Sets the domain """
         self.domain = self.textbox_domain.get()
@@ -159,13 +169,13 @@ class AttackDNSFrame(tk.Frame):
                                  "Please check the format of your provided domain and correct it.".format(self.domain))
             return
 
-        try:
-            self.auth_dns = dis.get_authoritative_nameserver(self.domain)
-        except:
-            messagebox.showerror("Error", "We could not obtain the authoritative DNS server for {0}.\n\n"
-                                          "See if you can reach this domain with your internet connection. If not,"
-                                          "then this could be the reason.".format(self.domain))
-            return
+        # try:
+        #     self.auth_dns = dis.get_authoritative_nameserver(self.domain)
+        # except:
+        #     messagebox.showerror("Error", "We could not obtain the authoritative DNS server for {0}.\n\n"
+        #                                   "See if you can reach this domain with your internet connection. If not,"
+        #                                   "then this could be the reason.".format(self.domain))
+        #     return
 
         self.log.update_out(self.domain + ' has been set as the target domain')
         self.label_domain.config(text=('Target domain: ' + self.domain))
@@ -197,10 +207,17 @@ class AttackDNSFrame(tk.Frame):
         Starts a DNS spoofing attack on all combinations between victim pairs with respect to the target
         """
         victims, self.rec_dns = dis.get_dns_settings()
+        print("victims: " + str(victims))
+        for vic in victims:
+            if vic != str(self.rec_dns):
+                self.auth_dns = vic
 
         # deal with saving the traffic in a pcap file
         if self.ck.get() is not "0":
             self.save_traffic = True
+
+        if self.pois_vic.get() is not "0":
+            self.poison_vic = True
 
         if self.auth_dns is None or self.rec_dns is None or self.domain is None:
             messagebox.showerror(
@@ -226,7 +243,7 @@ class AttackDNSFrame(tk.Frame):
         self.controller.log.update_out('Starting DNS spoofing')
 
         self.dns = DnsPois()
-        self.dns.set(self.auth_dns, self.rec_dns, self.fake_domain, self.domain, self.save_traffic)
+        self.dns.set(self.auth_dns, self.rec_dns, self.fake_domain, self.domain, self.save_traffic, self.poison_vic)
         self.dns.start()
 
         self.controller.log.update_stat('DNS spoofing is active')
@@ -256,14 +273,17 @@ class AttackDNSFrame(tk.Frame):
         self.fake_domain = None
         self.auth_dns = None
         self.rec_dns = None
+        self.poison_vic = False
 
         self.controller.log.update_out('DNS spoofing stopped')
         self.controller.log.update_stat('Stopped DNS spoofing')
 
-        messagebox.showinfo("Saved trafic", "You can observe the saved traffic under the `pcap_files' folder. This "
+        if self.save_traffic:
+            messagebox.showinfo("Saved trafic", "You can observe the saved traffic under the `pcap_files' folder. This "
                                             "file can be opened with Wireshark. Here, one can observe the traffic "
                                             "that was involved during the ARP poisoning and"
                                             "DNS cache poisoning attack.")
+            self.save_traffic = False
 
     @staticmethod
     def dis_err(case):
