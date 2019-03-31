@@ -16,6 +16,10 @@ class ArpPois:
         self.thread = None
         self.stop_thread = None
         self.sleep_time = 5
+        # self.save_traffic = False
+
+    # def set_save(self, save_traffic):
+    #     self.save_traffic = save_traffic
 
     def set_victims(self, victims_ip, victims_mac):
         """
@@ -88,6 +92,13 @@ class ArpPois:
             pass
             # messagebox.showerror(
             #     "Error", "Please use a Linux system.")
+
+        # print(self.save_traffic)
+        # if self.save_traffic:
+        #     packets = sniff()
+        #     print(packets)
+        #     name = str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap'
+        #     wrpcap('../pcap_files/' + name, packets)
 
         while not self.stop:
             for ip, mac in zip(self.victims_ip, self.victims_mac):

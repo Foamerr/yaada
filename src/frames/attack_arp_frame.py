@@ -30,6 +30,7 @@ class AttackARPFrame(tk.Frame):
         self.log = self.controller.log
         self.attacker_ip = None
         self.ns = None
+        # self.save_traffic = False
 
         # FRAMES SETUP #
         top_frame = tk.Frame(self)
@@ -58,7 +59,7 @@ class AttackARPFrame(tk.Frame):
                                  text="Scan the network and select the targets and victims",
                                  font=(self.controller.font, self.controller.font_size))
         self.label_ip.config(bg='#DADADA', fg='black')
-        self.label_ip.pack(side='top', pady=5)
+        self.label_ip.pack(side='top', pady=2)
 
         self.ck = tk.StringVar()
         self.ck.set("0")
@@ -67,7 +68,7 @@ class AttackARPFrame(tk.Frame):
                                    font=(self.controller.font, self.controller.font_size),
                                    variable=self.ck)
         self.save.config(bg='#DADADA', fg='black')
-        self.save.pack(side='top', pady=5)
+        self.save.pack(side='top', pady=2)
 
         self.button_scan = tk.Button(self.labelframe_in,
                                      text="Scan",
@@ -75,7 +76,7 @@ class AttackARPFrame(tk.Frame):
                                      width=30,
                                      font=(self.controller.font, self.controller.font_size))
         self.button_scan.config(bg='#DADADA', fg='black')
-        self.button_scan.pack(side='top', pady=5)
+        self.button_scan.pack(side='top', pady=2)
 
         self.ip_box = tk.Listbox(self.labelframe_in,
                                  width=53,
@@ -84,7 +85,7 @@ class AttackARPFrame(tk.Frame):
                                  font=(self.controller.font,
                                        self.controller.font_size),
                                  activestyle='none')
-        self.ip_box.pack(side='top', padx=10, pady=5)
+        self.ip_box.pack(side='top', padx=10, pady=2)
 
         self.button_victim = tk.Button(button_set_frame,
                                        text="Set victims",
@@ -118,7 +119,7 @@ class AttackARPFrame(tk.Frame):
                                      anchor=tk.W,
                                      justify=tk.LEFT)
         self.label_victim.config(bg='#DADADA', fg='black')
-        self.label_victim.pack(side='top', padx=10, pady=5)
+        self.label_victim.pack(side='top', padx=10, pady=2)
 
         self.label_target = tk.Label(self.labelframe_out,
                                      text="Target: None",
@@ -129,7 +130,7 @@ class AttackARPFrame(tk.Frame):
                                      anchor=tk.W,
                                      justify=tk.LEFT)
         self.label_target.config(bg='#DADADA', fg='black')
-        self.label_target.pack(side='top', padx=10, pady=5)
+        self.label_target.pack(side='top', padx=10, pady=2)
 
         # BUTTONS #
         self.button_start = tk.Button(button_start_frame,
@@ -154,7 +155,7 @@ class AttackARPFrame(tk.Frame):
                                    text="Please enter a time interval to send packets\n(default is every 10 seconds)",
                                    font=(self.controller.font, self.controller.font_size))
         self.label_time.config(bg='#DADADA', fg='black')
-        self.label_time.pack(side='top', pady=5)
+        self.label_time.pack(side='top', pady=2)
 
         self.max_value = tk.StringVar()
         self.max_value.trace('w', self.limit_size)
@@ -167,6 +168,15 @@ class AttackARPFrame(tk.Frame):
         self.textbox_time.pack(side='top', padx=10, pady=5)
 
         self.textbox_time.insert(tk.END, 10)
+
+        # self.ck = tk.StringVar()
+        # self.ck.set("0")
+        # self.save = tk.Checkbutton(below_buttons_frame,
+        #                            text="Save traffic",
+        #                            font=(self.controller.font, self.controller.font_size),
+        #                            variable=self.ck)
+        # self.save.config(bg='#DADADA', fg='black')
+        # self.save.pack(side='top', pady=5)
 
     def limit_size(self, *args):
         """
@@ -228,6 +238,7 @@ class AttackARPFrame(tk.Frame):
                         count = count + 1
                 else:
                     if detailed:
+                        print(str(hostnames))
                         self.ip_box.insert(tk.END, ip + ' at ' + combinations[ip] + ' (' + hostnames[count] + ')')
                         count = count + 1
                     else:
@@ -313,6 +324,9 @@ class AttackARPFrame(tk.Frame):
                 "Error", "You cannot not set the target as a victim.")
             return
 
+        # if self.ck.get() is not "0":
+        #     self.save_traffic = True
+
         self.button_stop.config(state=tk.NORMAL)
         self.button_start.config(state=tk.DISABLED)
         self.is_poisoning = True
@@ -329,6 +343,7 @@ class AttackARPFrame(tk.Frame):
         self.arp.set_time(self.max_value.get())
         self.arp.set_victims(self.victims, self.victims_mac)
         self.arp.set_target(self.target, self.target_mac)
+        # self.arp.set_save(self.save_traffic)
         self.arp.start_poisoning()
 
         self.log.update_out('------------------Currently ARP Poisoning----------------------------------------')
@@ -365,6 +380,7 @@ class AttackARPFrame(tk.Frame):
         self.arp.stop_poisoning()
 
         self.is_poisoning = False
+        # self.save_traffic = False
         self.label_victim.config(text="Victims: None")
         self.label_target.config(text="Target: None")
 

@@ -53,18 +53,18 @@ class AttackDNSFrame(tk.Frame):
                                     justify=tk.LEFT,
                                     font=(self.controller.font, self.controller.font_size))
         self.label_intro.config(bg='#DADADA', fg='black')
-        self.label_intro.pack(side='top', pady=5)
+        self.label_intro.pack(side='top', pady=2)
 
         self.label_domain = tk.Label(self.labelframe_in,
                                      text="Target domain (e.g., www.realsite.com)",
                                      font=(self.controller.font, self.controller.font_size))
         self.label_domain.config(bg='#DADADA', fg='black')
-        self.label_domain.pack(side='top', pady=5)
+        self.label_domain.pack(side='top', pady=2)
 
         self.textbox_domain = tk.Entry(self.labelframe_in,
                                        width=53,
                                        font=(self.controller.font, self.controller.font_size))
-        self.textbox_domain.pack(side='top', padx=10, pady=10)
+        self.textbox_domain.pack(side='top', padx=10, pady=2)
 
         self.button_domain = tk.Button(self.labelframe_in,
                                        text="Set domain",
@@ -72,19 +72,19 @@ class AttackDNSFrame(tk.Frame):
                                        width=30,
                                        font=(self.controller.font, self.controller.font_size))
         self.button_domain.config(bg='#DADADA', fg='black')
-        self.button_domain.pack(side='top', pady=10)
+        self.button_domain.pack(side='top', pady=2)
 
         self.label_domain_fake = tk.Label(self.labelframe_in,
                                           text="Fake IP (the IP the victim will visit when trying to visit the domain above)",
                                           wraplength=450,
                                           font=(self.controller.font, self.controller.font_size))
         self.label_domain_fake.config(bg='#DADADA', fg='black')
-        self.label_domain_fake.pack(side='top', pady=10)
+        self.label_domain_fake.pack(side='top', pady=2)
 
         self.textbox_domain_fake = tk.Entry(self.labelframe_in,
                                             width=53,
                                             font=(self.controller.font, self.controller.font_size))
-        self.textbox_domain_fake.pack(side='top', padx=10, pady=10)
+        self.textbox_domain_fake.pack(side='top', padx=10, pady=2)
 
         self.button_domain_fake = tk.Button(self.labelframe_in,
                                             text="Set fake IP",
@@ -92,7 +92,7 @@ class AttackDNSFrame(tk.Frame):
                                             width=30,
                                             font=(self.controller.font, self.controller.font_size))
         self.button_domain_fake.config(bg='#DADADA', fg='black')
-        self.button_domain_fake.pack(side='top', pady=10)
+        self.button_domain_fake.pack(side='top', pady=2)
 
         # SETTINGS #
         self.labelframe_out = tk.LabelFrame(bottom_frame,
@@ -109,7 +109,7 @@ class AttackDNSFrame(tk.Frame):
                                      anchor=tk.W,
                                      justify=tk.LEFT)
         self.label_domain.config(bg='#DADADA', fg='black')
-        self.label_domain.pack(side='top', padx=10, pady=10)
+        self.label_domain.pack(side='top', padx=10, pady=2)
 
         self.label_fake_domain = tk.Label(self.labelframe_out,
                                           text="Fake IP: None",
@@ -119,7 +119,7 @@ class AttackDNSFrame(tk.Frame):
                                           anchor=tk.W,
                                           justify=tk.LEFT)
         self.label_fake_domain.config(bg='#DADADA', fg='black')
-        self.label_fake_domain.pack(side='top', padx=10, pady=10)
+        self.label_fake_domain.pack(side='top', padx=10, pady=2)
 
         # BUTTONS #
         self.button_start = tk.Button(button_start_frame,

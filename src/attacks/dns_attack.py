@@ -109,11 +109,10 @@ class DnsPois:
         Sniff the network with a stop_filter (@self.stopfilter)
         :return:
         """
-        # TODO: Stop filter is not used so packet saving does not work
-        packets = sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain, self.pois_vic_instead))
+        packets = sniff(prn=self.responder(self.auth_ip, self.rec_ip, self.mal_ip, self.domain, self.pois_vic_instead),
+                        stop_filter=self.stopfilter)
         if self.save:
-            name = str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap'
-            wrpcap('../pcap_files/' + name, packets)
+            wrpcap('../pcap_files/' + str(datetime.now().time().strftime("%H_%M_%S")) + '_DNS_cache_poisoning.pcap', packets)
 
     def stop_poisoning(self):
         """
