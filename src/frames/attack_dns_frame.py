@@ -242,6 +242,8 @@ class AttackDNSFrame(tk.Frame):
 
         self.controller.log.update_out('Starting DNS spoofing')
 
+        print("Poisoning vic instead? : " + str(self.poison_vic))
+
         self.dns = DnsPois()
         self.dns.set(self.auth_dns, self.rec_dns, self.fake_domain, self.domain, self.save_traffic, self.poison_vic)
         self.dns.start()
