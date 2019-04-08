@@ -13,15 +13,6 @@ from scapy.all import *
 from scapy.layers.l2 import Ether, ARP
 
 
-def arp_ping(netmask="192.168.1.0/24"):
-    """
-    Returns the IP and MAC-address of all local hosts with respect to @netmask
-    """
-    conf.verb = 0
-    ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=netmask), timeout=0.2)
-    return [rcv.sprintf(r"%Ether.src% at %ARP.psrc%") for snd, rcv in ans]
-
-
 def get_default_gateway():
     """
     Returns the default gateway of a host
@@ -46,26 +37,6 @@ def get_local_host_ip():
                 return j['addr']
         else:
             return None
-
-
-def arp_ping_details(netmask="192.168.2.254/24"):
-    """
-    Returns the IP and MAC-address of all local hosts together with the hostname if possible
-    """
-    conf.verb = 0
-    ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=netmask), timeout=0.2)
-    hosts = []
-    print(ans)
-    for s, r in ans.res:
-        try:
-            hostname = socket.gethostbyaddr(r.psrc)
-            hosts.append(hostname[0])
-        except socket.herror:
-            # failed to resolve
-            pass
-        print(hosts)
-    ans.append(hosts)
-    return [(rcv.sprintf(r"%Ether.src% at %ARP.psrc%") for snd, rcv in ans)]
 
 
 def mac_for_ip(ip):
@@ -163,7 +134,8 @@ def scan_local_network(detailed=False):
             return combinations, hostnames
         else:
             return combinations
-    # deal with different operating systems
+    # TODO: refactor
+    # deal with different operating systems (unix/windows issue)
     except ValueError:
         for network, netmask, _, interface, address, _ in scapy.config.conf.route.routes:
             if network == 0 or interface == 'lo' or address == '127.0.0.1' or address == '0.0.0.0':
@@ -202,7 +174,8 @@ def get_authoritative_nameserver(domain):
     """
     Gets the authoritative server for a certain @domain
 
-    From: https://stackoverflow.com/questions/38021/how-do-i-find-the-authoritative-name-server-for-a-domain-name
+    Modified based on existing code that can be found here:
+    https://stackoverflow.com/questions/38021/how-do-i-find-the-authoritative-name-server-for-a-domain-name
 
     :param domain:
     :return:

